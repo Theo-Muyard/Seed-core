@@ -4,6 +4,48 @@
 #include "systems/filesystem/system.h"
 #include "systems/filesystem/_internal.h"
 
+static void	print_vfs_tree_node(const t_Directory *dir, const char *prefix, bool is_last)
+{
+	size_t			i;
+	size_t			total;
+	char			next_prefix[1024];
+	const char		*name;
+
+	if (NULL == dir)
+		return ;
+	name = dir->dirname;
+	if (NULL == name || '\0' == name[0])
+		name = ".";
+	if (NULL == prefix)
+		printf("%s\n", name);
+	else
+		printf("%s%s%s\n", prefix, is_last ? "`-- " : "|-- ", name);
+	if (NULL == prefix)
+		snprintf(next_prefix, sizeof(next_prefix), "");
+	else
+		snprintf(next_prefix, sizeof(next_prefix), "%s%s", prefix, is_last ? "    " : "|   ");
+	total = dir->subdir_count + dir->files_count;
+	i = 0;
+	while (i < dir->subdir_count)
+	{
+		print_vfs_tree_node(dir->subdir[i], next_prefix, (i + 1 == total));
+		i++;
+	}
+	i = 0;
+	while (i < dir->files_count)
+	{
+		printf("%s%s%s\n", next_prefix, (dir->subdir_count + i + 1 == total)
+			? "`-- " : "|-- ", dir->files[i]->filename);
+		i++;
+	}
+}
+
+static void	print_vfs_tree(const t_Directory *root)
+{
+	print_section("VFS TREE");
+	print_vfs_tree_node(root, NULL, true);
+}
+
 static int	assert_not_success(t_ErrorCode code, const char *message)
 {
 	if (ERR_SUCCESS == code)
@@ -161,6 +203,7 @@ static int	test_root_populates_vfs(void)
 	if (NULL == found_file)
 		goto fail;
 	print_success("Existing file loaded in VFS");
+	print_vfs_tree(manager->fs_ctx->root);
 	if (assert_error_code((manager_exec(manager, &(t_Command){CMD_FS_CLOSE_ROOT, NULL})), ERR_SUCCESS, "Close root"))
 		goto fail;
 

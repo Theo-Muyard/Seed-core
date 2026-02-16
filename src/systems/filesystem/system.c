@@ -1,7 +1,7 @@
 #include "core/dispatcher.h"
 #include "tools/memory.h"
 #include "tools/systems.h"
-#include "systems/filesystem/_internal.h"
+#include "systems/filesystem/vfs/_internal.h"
 #include "systems/filesystem/_os.h"
 #include "systems/filesystem/commands.h"
 #include "systems/filesystem/system.h"

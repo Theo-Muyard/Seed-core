@@ -3,7 +3,34 @@
 #include "systems/writing/commands.h"
 #include "systems/writing/system.h"
 
-#define BUFFER_ALLOC 16
+#define BUFFER_ALLOC 32
+
+/**
+ * @brief Converts the index given to the actual index of the first byte of the character.
+ * @param str The data content.
+ * @param index The index of the character.
+ * @return The real index to the first byte of the character. 
+*/
+static size_t	utf_char_to_byte(const char *str, size_t index)
+{
+	size_t	_i;
+	size_t	_count;
+
+	TEST_NULL(str, 0);
+	_i = 0;
+	_count = 0;
+	while (str[_i])
+	{
+		if ((str[_i] & 0xC0) != 0x80)
+		{
+			if (_count == index)
+				return (_i);
+			_count++;
+		}
+		_i++;
+	}
+	return (_i);
+}
 
 // +===----- Buffer -----===+ //
 
@@ -136,6 +163,7 @@ t_ErrorCode	cmd_buffer_line_split(t_Manager *manager, const t_Command *cmd)
 	t_WritingCtx		*_ctx;
 	t_CmdSplitLine		*_payload;
 	t_Line				*_line;
+	size_t				_byte_offset;
 
 	_ctx = manager->writing_ctx;
 	_payload = cmd->payload;
@@ -144,7 +172,8 @@ t_ErrorCode	cmd_buffer_line_split(t_Manager *manager, const t_Command *cmd)
 	_line = buffer_get_line(_ctx->buffers[_payload->buffer_id], _payload->line);
 	if (NULL == _line)
 		return (ERR_LINE_NOT_FOUND);
-	if (NULL == buffer_line_split(_ctx->buffers[_payload->buffer_id], _line, _payload->index))
+	_byte_offset = utf_char_to_byte(_line->data, _payload->index);
+	if (NULL == buffer_line_split(_ctx->buffers[_payload->buffer_id], _line, _byte_offset))
 		return (ERR_OPERATION_FAILED);
 	return (ERR_SUCCESS);
 }
@@ -185,7 +214,7 @@ t_ErrorCode	cmd_buffer_get_line(t_Manager *manager, const t_Command *cmd)
 	if (NULL == _line)
 		return (ERR_LINE_NOT_FOUND);
 	_payload->out_data = _line->data;
-	_payload->out_len = _line->len;
+	_payload->out_size = _line->size;
 	return (ERR_SUCCESS);
 }
 
@@ -196,6 +225,7 @@ t_ErrorCode	cmd_line_insert_data(t_Manager *manager, const t_Command *cmd)
 	t_WritingCtx		*_ctx;
 	t_CmdInsertData		*_payload;
 	t_Line				*_line;
+	size_t				_byte_offset;
 
 	_ctx = manager->writing_ctx;
 	_payload = cmd->payload;
@@ -204,7 +234,8 @@ t_ErrorCode	cmd_line_insert_data(t_Manager *manager, const t_Command *cmd)
 	_line = buffer_get_line(_ctx->buffers[_payload->buffer_id], _payload->line);
 	if (NULL == _line)
 		return (ERR_LINE_NOT_FOUND);
-	if (false == line_insert_data(_line, _payload->column, _payload->size, _payload->data))
+	_byte_offset = utf_char_to_byte(_line->data, _payload->index);
+	if (false == line_insert_data(_line, _byte_offset, _payload->size, _payload->data))
 		return (ERR_OPERATION_FAILED);
 	return (ERR_SUCCESS);
 }
@@ -214,6 +245,8 @@ t_ErrorCode	cmd_line_delete_data(t_Manager *manager, const t_Command *cmd)
 	t_WritingCtx		*_ctx;
 	t_CmdDeleteData		*_payload;
 	t_Line				*_line;
+	size_t				_byte_start;
+	size_t				_byte_end;
 
 	_ctx = manager->writing_ctx;
 	_payload = cmd->payload;
@@ -222,7 +255,9 @@ t_ErrorCode	cmd_line_delete_data(t_Manager *manager, const t_Command *cmd)
 	_line = buffer_get_line(_ctx->buffers[_payload->buffer_id], _payload->line);
 	if (NULL == _line)
 		return (ERR_LINE_NOT_FOUND);
-	if (false == line_delete_data(_line, _payload->column, _payload->size))
+	_byte_start = utf_char_to_byte(_line->data, _payload->index);
+	_byte_end = utf_char_to_byte(_line->data, _payload->index + _payload->size);
+	if (false == line_delete_data(_line, _byte_start, _byte_end - _byte_start))
 		return (ERR_OPERATION_FAILED);
 	return (ERR_SUCCESS);
 }

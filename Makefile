@@ -50,7 +50,7 @@ OBJ			=	$(addprefix $(BUILD_DIR)/, $(SRC:.c=.o))
 # 					COLORS / WIDTH
 # | ================================================ |
 
-COL_WIDTH	=	30
+COL_WIDTH	=	35
 RED			=	\033[31m
 GREEN		=	\033[32m
 BLUE		=	\033[34m
@@ -110,6 +110,6 @@ $(BUILD_DIR):
 $(BUILD_DIR)/%.o: src/%.c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDES)
-	@printf "$(BLUE)%-$(COL_WIDTH)s$(WHITE): ✔️\n" "$(notdir $@)"
+	@printf "$(BLUE)%-$(COL_WIDTH)s$(WHITE): ✔️\n" "$(patsubst $(BUILD_DIR)/%,%,$@)"
 
 .PHONY: all clean fclean re test

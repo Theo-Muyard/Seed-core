@@ -9,7 +9,7 @@
 typedef struct	s_Line
 {
 	char			*data;	/* The data content */
-	size_t			len;	/* The data len content */
+	size_t			size;	/* The data size content */
 	size_t			capacity;	/* The data capacity */
 	struct s_Line	*prev;	/* The previous line */
 	struct s_Line	*next; 	/* The next line */

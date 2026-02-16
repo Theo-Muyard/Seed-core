@@ -103,17 +103,17 @@
 
 ### 5️⃣ Amélioration Générale
 
-- 🟨 **Couverture de tests**
-  - [ ] Viser >80% de couverture
-  - [ ] Tests pour tous les codes erreur
-  - [ ] Tests limites et edge cases
-  - [ ] Intégration tests (multi-système)
+- ✅ **Couverture de tests**
+  - [x] Viser >80% de couverture
+  - [x] Tests pour tous les codes erreur
+  - [x] Tests limites et edge cases
+  - [x] Intégration tests (multi-système)
 
-- 🟨 **Documentation**
-  - [ ] Mettre à jour README avec v0.2 changes
-  - [ ] Documenter les codes erreur
-  - [ ] Ajouter examples pour filesystem
-  - [ ] Créer migration guide depuis v0.1
+- ✅ **Documentation**
+  - [x] Mettre à jour README avec v0.2 changes
+  - [x] Documenter les codes erreur
+  - [x] Ajouter examples pour filesystem
+  - [x] Créer migration guide depuis v0.1
 
 ---
 
@@ -121,19 +121,29 @@
 
 > Après v0.2 stable | Nouvelles capabilities
 
-- ⬜ **Undo/Redo System**
-  - [ ] Stack d'opérations
-  - [ ] Replay d'opérations
-  - [ ] Limite de profondeur (configurable)
+- ✅ **Encodage unicode (UTF-8)**
+  - [x] Passer d'ASCII a UNICODE : writing system
+  - [x] Line: passage de len -> size
+  - [x] Conversion index -> emplacement de l'unicode
 
-- ⬜ **Encodage unicode**
-  - [ ] Passer d'ASCII a UNICODE : writing system
-  - [ ] Line: passage de len -> size
-  - [ ] Conversion index -> emplacement de l'unicode dans le tableau data
+- 🟨 **Resync fs**
+  - [ ] Detecter changement dans le dossier root
+  - [ ] Mettre a jour le VFS en fonction
 
-- ⬜ **Resync fs**
-  - [ ] Resync le VFS via les events OS (linux only)
+- ⬜ **Amelioration de la stabilite / performances**
+  - [ ] Verifier la gestion de la memoire (aucuns leaks)
+  - [ ] Erreurs correctement gerees, architecture clean et fonctions bien ecrites
+  - [ ] Optimiser si possible (sans suroptimiser)
 
+- ⬜ **Couverture de tests**
+  - [ ] Refaire tout le systeme de tests
+  - [ ] Tester les commandes uniquement: tests unitaires style `exemple XX` (relation test - documentation)
+
+- ⬜ **Documentation**
+  - [ ] Creer un dossier `documentation`
+  - [ ] Ajouter un fichier de documentation par systeme (writing, filesystem, ...)
+  - [ ] Documenter l'API globale dans un fichier a part
+  
 ---
 
 ## 🎨 v0.4 - Optimisations & Scalabilité

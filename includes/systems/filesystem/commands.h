@@ -3,6 +3,19 @@
 
 # include "core/manager.h"
 
+/**
+ * @brief Get the file error.
+ * @return The error.
+*/
+t_ErrorCode	get_file_error(void);
+
+/**
+ * @brief Get the dir error.
+ * @return The error.
+*/
+t_ErrorCode	get_dir_error(void);
+
+
 // +===----- Root -----===+ //
 
 /**

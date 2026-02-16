@@ -36,7 +36,7 @@ static int	insert_text(t_Manager *manager, size_t buffer_id, ssize_t line, ssize
 
 	payload.buffer_id = buffer_id;
 	payload.line = line;
-	payload.column = col;
+	payload.index = col;
 	payload.size = strlen(txt);
 	payload.data = txt;
 	cmd.id = CMD_WRITING_INSERT_TEXT;
@@ -106,7 +106,7 @@ static int	test_line_commands(void)
 	get_payload.buffer_id = buffer_id;
 	get_payload.line = 4;
 	get_payload.out_data = NULL;
-	get_payload.out_len = 0;
+	get_payload.out_size = 0;
 	cmd.id = CMD_WRITING_GET_LINE;
 	cmd.payload = &get_payload;
 	if (assert_error_code(manager_exec(manager, &cmd), ERR_LINE_NOT_FOUND, "Get missing line rejected"))
@@ -138,7 +138,7 @@ static int	test_text_commands(void)
 
 	del_payload.buffer_id = buffer_id;
 	del_payload.line = 0;
-	del_payload.column = 5;
+	del_payload.index = 5;
 	del_payload.size = 5;
 	cmd.id = CMD_WRITING_DELETE_TEXT;
 	cmd.payload = &del_payload;
@@ -147,17 +147,17 @@ static int	test_text_commands(void)
 	get_payload.buffer_id = buffer_id;
 	get_payload.line = 0;
 	get_payload.out_data = NULL;
-	get_payload.out_len = 0;
+	get_payload.out_size = 0;
 	cmd.id = CMD_WRITING_GET_LINE;
 	cmd.payload = &get_payload;
 	if (assert_error_code(manager_exec(manager, &cmd), ERR_SUCCESS, "Get modified line"))
 		return (manager_clean(manager), 1);
-	if (get_payload.out_len != 5 || 0 != strcmp(get_payload.out_data, "Hello"))
+	if (get_payload.out_size != 5 || 0 != strcmp(get_payload.out_data, "Hello"))
 		return (manager_clean(manager), print_error("Line content mismatch after delete"), 1);
 	print_success("Line content is correct after delete");
 	ins_payload.buffer_id = buffer_id;
 	ins_payload.line = 3;
-	ins_payload.column = 0;
+	ins_payload.index = 0;
 	ins_payload.size = strlen(msg);
 	ins_payload.data = msg;
 	cmd.id = CMD_WRITING_INSERT_TEXT;
@@ -165,11 +165,11 @@ static int	test_text_commands(void)
 	if (assert_error_code(manager_exec(manager, &cmd), ERR_LINE_NOT_FOUND, "Insert text rejected on missing line"))
 		return (manager_clean(manager), 1);
 	del_payload.line = 0;
-	del_payload.column = 999;
+	del_payload.index = 999;
 	del_payload.size = 1;
 	cmd.id = CMD_WRITING_DELETE_TEXT;
 	cmd.payload = &del_payload;
-	if (assert_error_code(manager_exec(manager, &cmd), ERR_OPERATION_FAILED, "Delete text rejected on invalid column"))
+	if (assert_error_code(manager_exec(manager, &cmd), ERR_OPERATION_FAILED, "Delete text rejected on invalid index"))
 		return (manager_clean(manager), 1);
 	manager_clean(manager);
 	return (0);
@@ -224,7 +224,7 @@ static int	test_split_and_join_commands(void)
 	get_payload.buffer_id = buffer_id;
 	get_payload.line = 0;
 	get_payload.out_data = NULL;
-	get_payload.out_len = 0;
+	get_payload.out_size = 0;
 	cmd.id = CMD_WRITING_GET_LINE;
 	cmd.payload = &get_payload;
 	if (assert_error_code(manager_exec(manager, &cmd), ERR_SUCCESS, "Get joined line"))

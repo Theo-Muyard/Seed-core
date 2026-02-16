@@ -33,6 +33,14 @@ typedef struct	s_Directory
 // +===----- Path -----===+ //
 
 /**
+ * @brief Join two paths.
+ * @param base The base path.
+ * @param path The path that will be added to the end of the base.
+ * @return The joined allocated path.
+*/
+char		*join_path(const char *base, const char *path);
+
+/**
  * @brief Get the relative path of a dir.
  * @param dir The dir to find his relative path.
  * @return The relative path.

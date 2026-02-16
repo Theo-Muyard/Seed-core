@@ -1,18 +1,15 @@
 #include "seed.h"
 #include "dependency.h"
 #include "tools/memory.h"
-#include "systems/filesystem/_internal.h"
+#include "systems/filesystem/vfs/_internal.h"
+#include "systems/filesystem/watcher/_internal.h"
 #include "systems/filesystem/_os.h"
 #include "systems/filesystem/commands.h"
 #include "systems/filesystem/system.h"
 
 // +===----- OS Errors -----===+ //
 
-/**
- * @brief Get the file error.
- * @return The error.
-*/
-static t_ErrorCode	get_file_error(void)
+t_ErrorCode	get_file_error(void)
 {
 	switch (errno)
 		{
@@ -28,11 +25,7 @@ static t_ErrorCode	get_file_error(void)
 	return (ERR_OPERATION_FAILED);
 }
 
-/**
- * @brief Get the dir error.
- * @return The error.
-*/
-static t_ErrorCode	get_dir_error(void)
+t_ErrorCode	get_dir_error(void)
 {
 	switch (errno)
 		{
@@ -48,73 +41,13 @@ static t_ErrorCode	get_dir_error(void)
 	return (ERR_OPERATION_FAILED);
 }
 
-// +===----- Path -----===+ //
-
-/**
- * @brief Join two paths.
- * @param base The base path.
- * @param path The path that will be added to the end of the base.
- * @return The joined allocated path.
-*/
-static char	*join_path(const char *base, const char *path)
-{
-	char	*joined_path;
-	size_t	_base_len;
-	size_t	_path_len;
-	size_t	_len;
-	int		_need_slash;
-
-	TEST_NULL(base, NULL);
-	TEST_NULL(path, NULL);
-
-	_base_len = strlen(base);
-	_path_len = strlen(path);
-	_len = _base_len + _path_len;
-	_need_slash = (_base_len > 0 && base[_base_len - 1] != '/');
-	joined_path = malloc((_len + _need_slash + 1) * sizeof(char));
-	TEST_NULL(joined_path, NULL);
-	memcpy(joined_path, base, _base_len);
-	if (_need_slash)
-		joined_path[_base_len++] = '/';
-	memcpy(
-		joined_path + _base_len,
-		path,
-		_path_len
-	);
-	joined_path[_len + _need_slash] = '\0';
-	return (joined_path);
-}
-
-/**
- * @brief Get the parent directory of the given path.
- * @param root The root of the VFS.
- * @param path The path of file / directory.
- * @return The parent directory.
-*/
-static t_Directory	*get_parent_directory(t_Directory *root, const char *path)
-{
-	t_Directory	*_dir;
-	char		*_cpy;
-	char		*_slash;
-
-	_cpy = ft_strdup(path);
-	TEST_NULL(_cpy, NULL);
-	_slash = strrchr(_cpy, '/');
-	if (NULL == _slash)
-		return (free(_cpy), root);
-	*_slash = '\0';
-	_dir = directory_resolve(root, _cpy);
-	free(_cpy);
-	return (_dir);
-}
-
 /**
  * @brief Initialize the VFS root. Retrive all subdirs and files.
  * @param root The root directory of the VFS.
  * @param abs_path The absolute path of the root directory.
  * @return A Seed ErrorCode.
 */
-static t_ErrorCode	get_VFS_root(t_Directory *root, const char *abs_path)
+t_ErrorCode	get_VFS_root(t_Directory *root, const char *abs_path)
 {
 	DIR				*_dir;
 	struct dirent	*_entry;
@@ -154,6 +87,31 @@ static t_ErrorCode	get_VFS_root(t_Directory *root, const char *abs_path)
 	}
 	closedir(_dir);
 	return (ERR_SUCCESS);
+}
+
+// +===----- Path -----===+ //
+
+/**
+ * @brief Get the parent directory of the given path.
+ * @param root The root of the VFS.
+ * @param path The path of file / directory.
+ * @return The parent directory.
+*/
+static t_Directory	*get_parent_directory(t_Directory *root, const char *path)
+{
+	t_Directory	*_dir;
+	char		*_cpy;
+	char		*_slash;
+
+	_cpy = ft_strdup(path);
+	TEST_NULL(_cpy, NULL);
+	_slash = strrchr(_cpy, '/');
+	if (NULL == _slash)
+		return (free(_cpy), root);
+	*_slash = '\0';
+	_dir = directory_resolve(root, _cpy);
+	free(_cpy);
+	return (_dir);
 }
 
 // +===----- Root -----===+ //
