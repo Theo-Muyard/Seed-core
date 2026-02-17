@@ -110,7 +110,34 @@ bool		watcher_analyze(t_WatchCtx *ctx)
 		ctx->event_count++;
 		_i++;
 	}
+	if (false == flush_pending(ctx))
+		return (false);
 	return (true);
+}
+
+// TODO: delete
+void print_event(t_FsEvent *event)
+{
+	if (event->type == 0)
+	{
+		printf("-> EVENT: CREATE (%s)\n-> Path: %s\n", event->isdir ? "dir" : "file", event->path);
+		return ;
+	}
+	if (event->type == 1)
+	{
+		printf("-> EVENT: DELETE (%s)\n-> Path: %s\n", event->isdir ? "dir" : "file", event->path);
+		return ;
+	}
+	if (event->type == 2)
+	{
+		printf("-> EVENT: MOVE (%s)\n-> Old path: %s\n-> New path: %s\n", event->isdir ? "dir" : "file", event->path, event->new_path);
+		return ;
+	}
+	if (event->type == 3)
+	{
+		printf("-> EVENT: OVERFLOW (%s)\n", event->isdir ? "dir" : "file");
+		return ;
+	}
 }
 
 int	main(void)
@@ -118,12 +145,14 @@ int	main(void)
 	t_WatchCtx	*_ctx;
 	int			_fd;
 
-	_ctx = watcher_init("/home/tmuyard/Seed/src/backend/tmp");
+	_ctx = watcher_init("/home/tmuyard/seed-core/tmp");
+	if (NULL == _ctx)
+		return (printf("Folder not found.\n"), 1);
 	if (false == watch_add_recursive(_ctx, _ctx->path))
 		return (watcher_destroy(_ctx), 1);
 	printf("Watching...\n");
 	int	count = 0;
-	while (count < 3)
+	while (count < 10)
 	{
 		if (false == watcher_analyze(_ctx))
 			return (printf("Watcher error\n"), watcher_destroy(_ctx), 1);
@@ -131,7 +160,8 @@ int	main(void)
 		int	_i = 0;
 		while (_i < _ctx->event_count)
 		{
-			printf("-> EVENT: %d (%d)\n", _ctx->event_queue[_i]->type, _ctx->event_queue[_i]->isdir);
+			print_event(_ctx->event_queue[_i]);
+			printf("\n");
 			_i++;
 		}
 		printf("\n=== END QUEUE ===\n");

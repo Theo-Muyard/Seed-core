@@ -77,6 +77,13 @@ bool		watch_add_recursive(t_WatchCtx *ctx, const char *path);
 bool		watch_remove_recursive(t_WatchCtx *ctx, const char *path);
 
 /**
+ * @brief Flushs the remaining move pending.
+ * @param ctx The watcher context. 
+ * @return TRUE for success or FALSE if an error occured.
+*/
+bool		flush_pending(t_WatchCtx *ctx);
+
+/**
  * @brief Handle an event.
  * @param ctx The watcher context.
  * @param event The inotify event.
