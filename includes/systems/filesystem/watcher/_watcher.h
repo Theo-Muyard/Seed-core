@@ -7,7 +7,7 @@
 
 typedef enum	e_FsEventsType
 {
-	FS_EVENT_CREATE,
+	FS_EVENT_CREATE = 0,
 	FS_EVENT_DELETE,
 	FS_EVENT_MOVE,
 	FS_EVENT_OVERFLOW
@@ -32,7 +32,6 @@ typedef struct	s_MovePending
 	uint32_t	cookie;
 	bool		is_dir;
 	char		*from_path;
-	time_t		created_at;
 }	t_MovePending;
 
 typedef struct	s_WatchCtx
