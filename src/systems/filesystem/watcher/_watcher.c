@@ -151,21 +151,20 @@ void print_event(t_FsEvent *event)
 int	main(void)
 {
 	t_WatchCtx	*_ctx;
-	int			_fd;
 
-	_ctx = watcher_init("/home/tmuyard/seed-core/tmp");
+	_ctx = watcher_init("/home/theo/Documents/Development/seed-core/tmp");
 	if (NULL == _ctx)
 		return (printf("Folder not found.\n"), 1);
 	if (false == watch_add_recursive(_ctx, _ctx->path))
 		return (watcher_destroy(_ctx), 1);
 	printf("Watching...\n");
 	int	count = 0;
-	while (count < 5)
+	while (count < 10)
 	{
 		if (false == watcher_analyze(_ctx))
 			return (printf("Watcher error\n"), watcher_destroy(_ctx), 1);
 		printf("\n=== QUEUE ===\n");
-		int	_i = 0;
+		size_t	_i = 0;
 		while (_i < _ctx->event_count)
 		{
 			print_event(_ctx->event_queue[_i]);

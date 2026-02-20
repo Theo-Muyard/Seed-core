@@ -2,41 +2,41 @@
 #include "systems/filesystem/vfs/_internal.h"
 
 // TODO: delete
-static void	print_vfs_tree_node(const t_Directory *dir, const char *prefix, bool is_last)
-{
-	size_t			i;
-	size_t			total;
-	char			next_prefix[1024];
-	const char		*name;
+// static void	print_vfs_tree_node(const t_Directory *dir, const char *prefix, bool is_last)
+// {
+// 	size_t			i;
+// 	size_t			total;
+// 	char			next_prefix[1024];
+// 	const char		*name;
 
-	if (NULL == dir)
-		return ;
-	name = dir->dirname;
-	if (NULL == name || '\0' == name[0])
-		name = ".";
-	if (NULL == prefix)
-		printf("%s\n", name);
-	else
-		printf("%s%s%s\n", prefix, is_last ? "`-- " : "|-- ", name);
-	if (NULL == prefix)
-		snprintf(next_prefix, sizeof(next_prefix), "");
-	else
-		snprintf(next_prefix, sizeof(next_prefix), "%s%s", prefix, is_last ? "    " : "|   ");
-	total = dir->subdir_count + dir->files_count;
-	i = 0;
-	while (i < dir->subdir_count)
-	{
-		print_vfs_tree_node(dir->subdir[i], next_prefix, (i + 1 == total));
-		i++;
-	}
-	i = 0;
-	while (i < dir->files_count)
-	{
-		printf("%s%s%s\n", next_prefix, (dir->subdir_count + i + 1 == total)
-			? "`-- " : "|-- ", dir->files[i]->filename);
-		i++;
-	}
-}
+// 	if (NULL == dir)
+// 		return ;
+// 	name = dir->dirname;
+// 	if (NULL == name || '\0' == name[0])
+// 		name = ".";
+// 	if (NULL == prefix)
+// 		printf("%s\n", name);
+// 	else
+// 		printf("%s%s%s\n", prefix, is_last ? "`-- " : "|-- ", name);
+// 	if (NULL == prefix)
+// 		snprintf(next_prefix, sizeof(next_prefix), "");
+// 	else
+// 		snprintf(next_prefix, sizeof(next_prefix), "%s%s", prefix, is_last ? "    " : "|   ");
+// 	total = dir->subdir_count + dir->files_count;
+// 	i = 0;
+// 	while (i < dir->subdir_count)
+// 	{
+// 		print_vfs_tree_node(dir->subdir[i], next_prefix, (i + 1 == total));
+// 		i++;
+// 	}
+// 	i = 0;
+// 	while (i < dir->files_count)
+// 	{
+// 		printf("%s%s%s\n", next_prefix, (dir->subdir_count + i + 1 == total)
+// 			? "`-- " : "|-- ", dir->files[i]->filename);
+// 		i++;
+// 	}
+// }
 
 // +===----- Path -----===+ //
 

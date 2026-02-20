@@ -19,7 +19,7 @@ FLAGS		=	rcs
 # 					INCLUDES
 # | ================================================ |
 
-INCLUDES	=	-I includes #-I includes/core -I includes/systems/writing
+INCLUDES	=	-I includes
 
 # | ================================================ |
 # 					SOURCE FILES

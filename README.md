@@ -22,21 +22,21 @@
 
 int main(void)
 {
-    t_Manager *manager = manager_init();
-    if (!manager)
-        return (1);
+	t_Manager *manager = manager_init();
+	if (!manager)
+		return (1);
 
-    t_CmdCreateBuffer payload = {0};
-    t_Command cmd = {
-        .id = CMD_WRITING_CREATE_BUFFER,
-        .payload = &payload
-    };
+	t_CmdCreateBuffer payload = {0};
+	t_Command cmd = {
+		.id = CMD_WRITING_CREATE_BUFFER,
+		.payload = &payload
+	};
 
-    if (manager_exec(manager, &cmd) != ERR_SUCCESS)
-        return (manager_clean(manager), 1);
+	if (manager_exec(manager, &cmd) != ERR_SUCCESS)
+		return (manager_clean(manager), 1);
 
-    manager_clean(manager);
-    return (0);
+	manager_clean(manager);
+	return (0);
 }
 ```
 
@@ -75,8 +75,8 @@ Executes a command and returns `ERR_SUCCESS` or an `ERR_*` code.
 ```c
 typedef struct s_Command
 {
-    t_CommandId id;     /* The command ID */
-    void        *payload; /* The payload content */
+	t_CommandId	id;	/* The command ID */
+	void		*payload;	/* The payload content */
 } t_Command;
 ```
 
