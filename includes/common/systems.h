@@ -5,7 +5,7 @@
 
 // +===----- Types -----===+ //
 
-typedef struct s_Dispatcher		t_Dispatcher;
+typedef struct s_Dispatcher	t_Dispatcher;
 typedef struct s_CommandEntry	t_CommandEntry;
 
 // +===----- Functions -----===+ //

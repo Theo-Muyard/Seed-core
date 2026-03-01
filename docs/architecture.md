@@ -47,10 +47,37 @@ If possible, create as few headers as possible, but separation is the watchword.
 
 For example, a complet system may contain internal system, a command system and an entry point, each of which must have its own header.
 
+---
+
 ## Common
 
 The common part of the project includes utilities for the entire project.
 Whether it be functions managing memory, systems, or other aspects.
 If a function is useful to multiple systems, it will be defined here.
 
+---
+
 ## Hierarchy
+
+The seed core has a structured hierarchy.
+The manager manage all the system, no leak possible if it was correctly used.
+
+- Manager
+▼
+- Dispatcher
+▼
+- Any systems
+
+---
+
+## Systems
+
+The core will be contains multiple systems, now it contains only 2 systems.
+- The first system is the `writing system` that manage buffers, lines and content with UNICODE / UTF-8.
+- The second system is the `filesystem` that manage advanced VFS and os actions.
+
+---
+
+## Tests
+
+The test folder contains all units tests. You can test it with `make test TARGET=<system>`
