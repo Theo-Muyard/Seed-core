@@ -14,15 +14,15 @@
 
 ---
 
+> [!NOTE]
+> The architecture is not perfect and will change serveral times.
+
 ## Quick start
 
 This is a short document presenting the architecture of the Seed-core.
 How the project is conceived, moving form folder names and their contents to a more comprehensive view of the project.
 
-> [!NOTE]
-> The architecture is not perfect and will change serveral times.
-
-## Tree
+## Tree
 
 A brief overview of the project. 
 ```C
@@ -49,7 +49,7 @@ For example, a complet system may contain internal system, a command system and 
 
 ---
 
-## Common
+## Common
 
 The common part of the project includes utilities for the entire project.
 Whether it be functions managing memory, systems, or other aspects.
@@ -57,7 +57,7 @@ If a function is useful to multiple systems, it will be defined here.
 
 ---
 
-## Hierarchy
+## Hierarchy
 
 The seed core has a structured hierarchy.
 The manager manage all the system, no leak possible if it was correctly used.
@@ -70,7 +70,7 @@ The manager manage all the system, no leak possible if it was correctly used.
 
 ---
 
-## Systems
+## Systems
 
 The core will be contains multiple systems, now it contains only 2 systems.
 - The first system is the `writing system` that manage buffers, lines and content with UNICODE / UTF-8.
@@ -78,6 +78,6 @@ The core will be contains multiple systems, now it contains only 2 systems.
 
 ---
 
-## Tests
+## Tests
 
 The test folder contains all units tests. You can test it with `make test TARGET=<system>`

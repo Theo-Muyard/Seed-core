@@ -61,7 +61,7 @@ else
 
 ---
 
-## Breaking long lines
+## Breaking long lines
 
 The limit on the length of lines is 80 columns.
 Lines longer than 80 characters should be broken into several lines.
@@ -118,7 +118,7 @@ Before and after these :
 ```
 
 
-## Naming
+## Naming
 
 The name of anything, whether if be functions, variables or anything else, should be as explicit as possible.
 
@@ -177,7 +177,7 @@ typedef struct	s_Buffer
 A function should be short and concise: one function, one action.
 A function can be as short as 10 lines or as long as 50, but it shoult always do one thing at a time.
 
-## Goto usage
+## Goto usage
 
 The use of goto should be EXCLUSIVELY for handling common error cases.
 
@@ -218,13 +218,13 @@ void	my_function(void);
 void	my_function(void);
 ```
 
-## Macros
+## Macros
 
 Macros should not be too long, a macro can call a function if necessary.
 For magic numbers, macros are definitely preferable.
 Macros can also be used to optimize certain recurring elements in your code, but be careful not to overuse them.
 
-## Headers
+## Headers
 
 Headers are the best solution for clean code.
 Headers contains the prototypes of functions, these functions must be documented in his header, NO comments in `.c`

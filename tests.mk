@@ -1,66 +1,66 @@
 # | ================================================ |
-# 						NAMES
+# 			NAMES
 # | ================================================ |
 
-NAME				=	seed_test
-BUILD_DIR			=	build/tests
-SEED_ARCHIVE		=	seed_core.a
+NAME		=	seed_test
+BUILD_DIR	=	build/tests
+SEED_ARCHIVE	=	seed_core.a
 
 # | ================================================ |
-# 					COMPILATION
+# 			COMPILATION
 # | ================================================ |
 
-CC					=	cc
-CFLAGS				=	-Wall -Wextra -Werror
+CC		=	cc
+CFLAGS		=	-Wall -Wextra -Werror
 
 # | ================================================ |
-# 					INCLUDES
+# 			INCLUDES
 # | ================================================ |
-INCLUDES			=	-I includes -I tests
-
-# | ================================================ |
-# 					SOURCE FILES
-# | ================================================ |
-
-TESTS_SRC			=	tests/tools.c
-
-MANAGER_SRC			=	tests/core/TEST_manager.c
-
-DISPATCHER_SRC		=	tests/core/TEST_dispatcher.c
-
-WRITING_SRC			=	tests/systems/writing/TEST_writing_internal.c \
-						tests/systems/writing/TEST_writing_commands.c \
-						tests/systems/writing/TEST_writing_main.c
-
-FS_SRC				=	tests/systems/filesystem/TEST_fs.c
-
+INCLUDES	=	-I includes -I tests
 
 # | ================================================ |
-# 					OBJ FILES
+# 			SOURCE FILES
 # | ================================================ |
 
-TEST_OBJ			=	$(addprefix $(BUILD_DIR)/, $(notdir $(TESTS_SRC:.c=.o)))
+TESTS_SRC	=	tests/tools.c
 
-MANAGER_OBJ			=	$(addprefix $(BUILD_DIR)/, $(notdir $(MANAGER_SRC:.c=.o)))
+MANAGER_SRC	=	tests/core/TEST_manager.c
 
-DISPATCHER_OBJ		=	$(addprefix $(BUILD_DIR)/, $(notdir $(DISPATCHER_SRC:.c=.o)))
+DISPATCHER_SRC	=	tests/core/TEST_dispatcher.c
 
-WRITING_OBJ			=	$(addprefix $(BUILD_DIR)/, $(notdir $(WRITING_SRC:.c=.o)))
+WRITING_SRC	=	tests/systems/writing/TEST_writing_internal.c \
+			tests/systems/writing/TEST_writing_commands.c \
+			tests/systems/writing/TEST_writing_main.c
 
-FS_OBJ				=	$(addprefix $(BUILD_DIR)/, $(notdir $(FS_SRC:.c=.o)))
+FS_SRC		=	tests/systems/filesystem/TEST_fs.c
+
 
 # | ================================================ |
-# 					COLORS / WIDTH
+# 			OBJ FILES
+# | ================================================ |
+
+TEST_OBJ	=	$(addprefix $(BUILD_DIR)/, $(notdir $(TESTS_SRC:.c=.o)))
+
+MANAGER_OBJ	=	$(addprefix $(BUILD_DIR)/, $(notdir $(MANAGER_SRC:.c=.o)))
+
+DISPATCHER_OBJ	=	$(addprefix $(BUILD_DIR)/, $(notdir $(DISPATCHER_SRC:.c=.o)))
+
+WRITING_OBJ	=	$(addprefix $(BUILD_DIR)/, $(notdir $(WRITING_SRC:.c=.o)))
+
+FS_OBJ		=	$(addprefix $(BUILD_DIR)/, $(notdir $(FS_SRC:.c=.o)))
+
+# | ================================================ |
+# 			COLORS / WIDTH
 # | ================================================ |
 
 COL_WIDTH	=	30
-RED			=	\033[31m
+RED		=	\033[31m
 GREEN		=	\033[32m
 BLUE		=	\033[34m
 WHITE		=	\033[37m
 
 # | ================================================ |
-# 					COMPILE FUNCTION
+# 			COMPILE FUNCTION
 # | ================================================ |
 
 define COMPILE_OBJ
@@ -70,21 +70,21 @@ $(BUILD_DIR)/$(notdir $(1:.c=.o)): $(1) | $(BUILD_DIR)
 endef
 
 # | ================================================ |
-# 					MAKE RULE
+# 			MAKE RULE
 # | ================================================ |
 
 all:
 	@echo "$(BLUE)Usage$(WHITE): make test TARGET=<target>"
 
 # | ================================================ |
-# 					RUN RULE
+# 			RUN RULE
 # | ================================================ |
 
 run:
 	./$(NAME)
 
 # | ================================================ |
-# 					TEST TARGETS
+# 			TEST TARGETS
 # | ================================================ |
 
 manager: $(TEST_OBJ) $(MANAGER_OBJ)
@@ -104,7 +104,7 @@ fs: $(TEST_OBJ) $(FS_OBJ)
 	@echo "$(GREEN)Done$(WHITE)."
 
 # | ================================================ |
-# 					DIRECTORY
+# 			DIRECTORY
 # | ================================================ |
 
 $(BUILD_DIR):
@@ -112,7 +112,7 @@ $(BUILD_DIR):
 	@printf "$(BLUE)%-$(COL_WIDTH)s$(WHITE): ✔️\n" "$(BUILD_DIR) (directory)"
 
 # | ================================================ |
-# 					OBJECTS
+# 			OBJECTS
 # | ================================================ |
 
 $(foreach src, $(TESTS_SRC), $(eval $(call COMPILE_OBJ,$(src))))

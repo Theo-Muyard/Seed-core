@@ -56,12 +56,11 @@ void	dispatcher_clean(t_Dispatcher *dispatcher)
 bool	dispatcher_register(
 	t_Dispatcher *dispatcher,
 	t_CommandId id,
-	size_t size,
 	t_Fn fn
 )
 {
 	t_CommandEntry	_entry;
-	size_t			_count;
+	size_t		_count;
 
 	TEST_NULL(dispatcher, false);
 	TEST_NULL(fn, false);
@@ -70,7 +69,6 @@ bool	dispatcher_register(
 	if (_count >= dispatcher->capacity)
 		return (false);
 	_entry.id = id;
-	_entry.size = size;
 	_entry.fn = fn;
 	dispatcher->commands[_count] = _entry;
 	dispatcher->count++;
