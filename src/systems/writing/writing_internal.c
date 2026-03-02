@@ -161,9 +161,15 @@ t_Line		*buffer_line_split(t_Buffer *buffer, t_Line *line, size_t index)
 
 t_Line		*buffer_line_join(t_Buffer *buffer, t_Line *dst, t_Line *src)
 {
-	TEST_NULL(dst, false);
-	TEST_NULL(src, false);
-	TEST_ERROR_FN(line_insert_data(dst, dst->size, src->size, src->data), NULL);
+	RETURN_IF_NULL(buffer, NULL);
+	RETURN_IF_NULL(dst, NULL);
+	RETURN_IF_NULL(src, NULL);
+
+	RETURN_IF_FALSE(
+		line_insert_data(dst, dst->size, src->size, src->data),
+		NULL
+	);
+
 	buffer_line_destroy(buffer, src);
 	return (dst);
 }
@@ -172,56 +178,64 @@ t_Line		*buffer_line_join(t_Buffer *buffer, t_Line *dst, t_Line *src)
 
 bool		line_insert_data(t_Line *line, ssize_t index, size_t size, const char *data)
 {
-	char	*_new_data;
-	size_t	_needed_capacity;
-	size_t	_new_capacity;
-
-	TEST_NULL(line, false);
-	TEST_NULL(data, false);
+	RETURN_IF_NULL(line, false);
+	RETURN_IF_NULL(data, false);
 
 	if (index < 0)
 		index = line->size;
+
 	if ((size_t)index > line->size)
 		return (false);
 
-	_needed_capacity = line->size + size + 1;
+	size_t	_needed_capacity = line->size + size + 1;
 	if (_needed_capacity > line->capacity)
 	{
-		_new_capacity = line->capacity ? line->capacity : DATA_ALLOC;
+		size_t	_new_capacity = line->capacity ? line->capacity : DATA_ALLOC;
 		while (_new_capacity < _needed_capacity)
 			_new_capacity *= 2;
-		_new_data = realloc(line->data, _new_capacity * sizeof(char));
-		TEST_NULL(_new_data, false);
+
+		char	*_new_data = realloc(line->data, _new_capacity * sizeof(char));
+		RETURN_IF_NULL(_new_data, false);
+
 		line->data = _new_data;
 		line->capacity = _new_capacity;
 	}
+
 	memmove(
 		line->data + index + size,
 		line->data + index,
 		line->size - index
 	);
+
 	memcpy(line->data + index, data, size);
+	
 	line->size += size;
 	line->data[line->size] = '\0';
+	
 	return (true);
 }
 
 bool		line_delete_data(t_Line *line, size_t index, size_t size)
 {
-	TEST_NULL(line, false);
+	RETURN_IF_NULL(line, false);
+
 	if (index > line->size)
 		return (false);
+
 	if (index + size > line->size)
     	size = line->size - index;
+
 	if (NULL == line->data || line->size == 0)
 		return (false);
 
 	memmove(
-			line->data + index,
-			line->data + index + size,
-			line->size - (index + size)
+		line->data + index,
+		line->data + index + size,
+		line->size - (index + size)
 	);
+
 	line->size = line->size - size;
 	line->data[line->size] = '\0';
+
 	return (true);
 }
