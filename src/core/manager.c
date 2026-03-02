@@ -1,25 +1,25 @@
 #include "core/manager.h"
-#include "core/dispatcher.h"
-#include "systems/writing/system.h"
-#include "systems/filesystem/system.h"
-
-// +===----- Functions -----===+ //
 
 t_Manager	*manager_init(void)
 {
-	t_Manager		*manager;
-	size_t			_size;
+	t_Manager	*manager = malloc(sizeof(t_Manager));
+	RETURN_IF_NULL(manager, NULL);
 
-	manager = malloc(sizeof(t_Manager));
-	TEST_NULL(manager, NULL);
-	_size = WRITING_COMMANDS_COUNT + FS_COMMANDS_COUNT;
-	if (false == dispatcher_init(manager, _size))
-		return (manager_clean(manager), NULL);
-	if (false == writing_init(manager))
-		return (manager_clean(manager), NULL);
-	if (false == fs_init(manager))
-		return (manager_clean(manager), NULL);
+	size_t	_size = WRITING_COMMANDS_COUNT + FS_COMMANDS_COUNT;
+
+	manager->dispatcher = NULL;
+	manager->writing_ctx = NULL;
+	manager->fs_ctx = NULL;
+
+	GOTO_IF_FALSE(dispatcher_init(manager, _size), exit_manager_clean);
+	GOTO_IF_FALSE(writing_init(manager), exit_manager_clean);
+	GOTO_IF_FALSE(fs_init(manager), exit_manager_clean);
+
 	return (manager);
+
+	/* GOTO EXIT */
+	exit_manager_clean:
+		return (manager_clean(manager), NULL);
 }
 
 void		manager_clean(t_Manager *manager)
@@ -35,7 +35,8 @@ void		manager_clean(t_Manager *manager)
 
 t_ErrorCode	manager_exec(t_Manager *manager, t_Command *cmd)
 {
-	TEST_NULL(manager, ERR_INVALID_MANAGER);
-	TEST_NULL(cmd, ERR_INVALID_COMMAND);
+	RETURN_IF_NULL(manager, ERR_INVALID_MANAGER);
+	RETURN_IF_NULL(cmd, ERR_INVALID_COMMAND);
+
 	return (dispatcher_exec(manager, cmd));
 }

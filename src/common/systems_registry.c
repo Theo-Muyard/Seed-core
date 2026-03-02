@@ -1,21 +1,20 @@
-#include "core/dispatcher.h"
-#include "common/systems.h"
+#include "common/systems_registry.h"
 
 bool	register_commands(
 	t_Dispatcher *dispatcher,
 	const t_CommandEntry *commands, size_t count
 )
 {
-	size_t	_i;
+	RETURN_IF_NULL(dispatcher, false);
+	RETURN_IF_NULL(commands, false);
 
-	_i = 0;
+	size_t	_i = 0;
 	while (_i < count)
 	{
-		if (!dispatcher_register(
-			dispatcher, commands[_i].id,
-			commands[_i].size, commands[_i].fn
-		))
-			return (false);
+		RETURN_IF_FALSE(
+			dispatcher_register(dispatcher, commands->id, commands->fn),
+			false
+		);
 		_i++;
 	}
 	return (true);

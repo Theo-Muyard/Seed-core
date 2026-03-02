@@ -58,7 +58,7 @@
  * @param var The variable.
  * @param label The goto label.
 */
-# define GOTO_IF_NULL(var, label) \
-	do { if (false == var) goto label } while (0)
+# define GOTO_IF_FALSE(var, label) \
+	do { if (false == var) goto label; } while (0)
 
 #endif
