@@ -12,7 +12,7 @@
 
 # include "dependency.h"
 
-#define DATA_ALLOC 256
+# define DATA_ALLOC 256
 
 // +===----- Types -----===+ //
 

@@ -1,7 +1,10 @@
 /**
  * @file "systems/filesystem/fs_vfs.h"
  * 
- * @brief Managing virtual files systems.
+ * @brief Managing virtual file system. The virtual file system
+ * 		internally replicates the operating system's file system.
+ * 
+ * @ingroup "filesystem"
 */
 
 #ifndef SEED_FILESYSTEM_VFS_H
@@ -78,16 +81,27 @@ char		*vfs_get_file_relative_path(const t_File *file);
  * @retval NULL if `dirname` is NULL, if allocation fails or
  * 		an error occurred.
  * 
- * @warning Caller must free returned pointer with `vfs_directory_destroy()`.
+ * @warning Caller must free returned pointer with `vfs_dir_destroy()`.
 */
-t_Directory	*vfs_directory_create(t_Directory *parent, const char *dirname);
+t_Directory	*vfs_dir_create(t_Directory *parent, const char *dirname);
 
 /**
  * @brief Destroys the directory.
  * 
  * @param dir The directory must not be NULL.
 */
-void		vfs_directory_destroy(t_Directory *dir);
+void		vfs_dir_destroy(t_Directory *dir);
+
+/**
+ * @brief Rename a folder.
+ * 
+ * @param dir The dir must not be NULL.
+ * @param dirname The dirname must not be NULL.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `dir` or `dirname` is NULL or an error occurred.
+*/
+bool		vfs_dir_rename(t_Directory *dir, const char *dirname);
 
 // +===----- File functions -----===+ //
 
@@ -144,100 +158,123 @@ bool		vfs_remove_file_to_dir(t_Directory *dir, t_File *file);
  * @retval NULL if `parent` or `filename` is NULL, if the file was not found
  * 		or an error occurred.
 */
-t_File		*vfs_find_file(t_Directory *parent, const char *filename);
-
-// TODO: Continuer a partir d'ici
+t_File		*vfs_file_find(t_Directory *parent, const char *filename);
 
 /**
- * @brief Resolve a relative path.
- * @param root The root directory.
- * @param path The relative path of the file.
- * @return The file if it was find or NULL.
+ * @brief Resolves a relative file path.
+ * 
+ * @param root The root must not be NULL.
+ * @param path The path must not be NULL.
+ * 
+ * @retval The file.
+ * @retval NULL if `root` or `path` is NULL, if the file was not found
+ * 		or an error occurred.
 */
-t_File		*file_resolve(t_Directory *root, const char *path);
+t_File		*vfs_file_resolve(t_Directory *root, const char *path);
 
 /**
- * @brief Move a file in src to dst directory.
- * @param dst The destination directory.
- * @param src The source directory.
- * @param file The file that will be moved.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Move a file from the source folder to the destination folder.
+ * 
+ * @param dst The destination folder must not be NULL.
+ * @param src The source folder must not be NULL.
+ * @param file The file must not be NULL.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `dst`, `src` or `file` is NULL or an error occurred.
 */
-bool		directory_file_move(t_Directory *dst, t_Directory *src, t_File *file);
+bool		vfs_file_move(t_Directory *dst, t_Directory *src, t_File *file);
 
 /**
  * @brief Rename a file.
- * @param subdir The file that will be renamed.
- * @param filename The new filename
- * @return TRUE for success or FALSE if an error occured.
+ * 
+ * @param file The file must not be NULL.
+ * @param filename The filename must not be NULL.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `file` or `filename` is NULL or an error occurred.
 */
-bool		directory_file_rename(t_File *file, const char *filename);
+bool		vfs_file_rename(t_File *file, const char *filename);
 
 /**
- * @brief Check if the directory contains a specific file.
- * @param dir The directory that contains files and sub directory.
- * @param file The file.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Check if the file is contained in the folder.
+ * 
+ * @param dir The directory must not be NULL.
+ * @param file The file must not be NULL.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `dir` or `file` is NULL or an error occurred.
 */
-bool		directory_contains_file(t_Directory *dir, t_File *file);
+bool		vfs_file_is_in_dir(t_Directory *dir, t_File *file);
 
-// +===----- Sub directory -----===+ //
-
-/**
- * @brief Add the given sub directory to the directory.
- * @param dir The directory that contains files.
- * @param subdir The sub directory that will be added.
- * @return TRUE for success or FALSE if an error occured.
-*/
-bool		directory_subdir_add(t_Directory *dir, t_Directory *subdir);
+// +===----- Subdir functions -----===+ //
 
 /**
- * @brief Remove the given sub directory.
- * @param dir The directory that contains files.
- * @param file The subdirectory that will be removed.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Add the sub folder to the folder.
+ * 
+ * @param dir The directory must not be NULL.
+ * @param subdir The sub directory must not be NULL.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `dir` or `subdir` is NULL or an error occurred.
 */
-bool		directory_subdir_remove(t_Directory *dir, t_Directory *subdir);
+bool		vfs_add_subdir_to_dir(t_Directory *dir, t_Directory *subdir);
 
 /**
- * @brief Find a sub directory by its name in the given directory.
- * @param parent The parent directory of the subdir that contains files and sub directory.
- * @param dirname The name of the sub directory.
- * @return The subdir or NULL if not found.
+ * @brief Remove the sub folder to the folder.
+ * 
+ * @param dir The directory must not be NULL.
+ * @param subdir The sub directory must not be NULL.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `dir` or `subdir` is NULL or an error occurred.
 */
-t_Directory	*directory_find_subdir(t_Directory *parent, const char *dirname);
+bool		vfs_remove_subdir_to_dir(t_Directory *dir, t_Directory *subdir);
 
 /**
- * @brief Resolve a relative path.
- * @param root The root directory.
- * @param path The relative path of the dir.
- * @return The dir if it was find or NULL.
+ * @brief Search for a sub folder by its dirname ONLY in its parent directory.
+ * 
+ * @param parent The parent must not be NULL.
+ * @param dirname The dirname must not be NULL.
+ * 
+ * @retval The subdir.
+ * @retval NULL if `parent` or `dirname` is NULL, if the subdir was not found
+ * 		or an error occurred.
 */
-t_Directory	*directory_resolve(t_Directory *root, const char *path);
+t_Directory	*vfs_subdir_find(t_Directory *parent, const char *dirname);
 
 /**
- * @brief Move a sub directory to src in dst directory.
- * @param dst The destination directory.
- * @param src The source directory.
- * @param subdir The sub directory that will be moved.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Resolves a relative sub folder path.
+ * 
+ * @param root The root must not be NULL.
+ * @param path The path must not be NULL.
+ * 
+ * @retval The subdir.
+ * @retval NULL if `root` or `path` is NULL, if the subdir was not found
+ * 		or an error occurred.
 */
-bool		directory_subdir_move(t_Directory *dst, t_Directory *src, t_Directory *subdir);
+t_Directory	*vfs_subdir_resolve(t_Directory *root, const char *path);
 
 /**
- * @brief Rename a sub directory.
- * @param subdir The sub directory that will be renamed.
- * @param dirname The new dirname
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Move a sub folder from the source folder to the destination folder.
+ * 
+ * @param dst The destination folder must not be NULL.
+ * @param src The source folder must not be NULL.
+ * @param subdir The sub folder must not be NULL.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `dst`, `src` or `subdir` is NULL or an error occurred.
 */
-bool		directory_subdir_rename(t_Directory *dir, const char *dirname);
+bool		vfs_subdir_move(t_Directory *dst, t_Directory *src, t_Directory *subdir);
 
 /**
- * @brief Check if the directory contains a specific sub directory.
- * @param dir The directory that contains files and sub directory.
- * @param subdir The subdir.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Check if the sub folder is contained in the folder.
+ * 
+ * @param dir The directory must not be NULL.
+ * @param subdir The sub folder must not be NULL.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `dir` or `subdir` is NULL or an error occurred.
 */
-bool		directory_contains_subdir(t_Directory *dir, t_Directory *subdir);
+bool		vfs_subdir_is_in_dir(t_Directory *dir, t_Directory *subdir);
 
 #endif

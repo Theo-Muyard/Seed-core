@@ -1,84 +1,121 @@
+/**
+ * @file "systems/filesystem/fs_os.h"
+ * 
+ * @brief Manages all interactions with the OS.
+ * 
+ * @ingroup "filesystem"
+*/
+
 #ifndef SEED_FILESYSTEM_OS_H
 # define SEED_FILESYSTEM_OS_H
 
 # include "dependency.h"
 
-// +===----- OS Directory -----===+ //
+// +===----- Directory functions -----===+ //
 
 /**
- * @brief Create a directory in the os filesystem.
- * @param path The path where the directory that will be created.
- * @param mode The permissions of the directory.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Create a folder in the OS filesystem.
+ * 
+ * @param path The path must not be NULL.
+ * @param mode The permission bits mode.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `path` is NULL or an error occurred.
 */
-bool		os_dir_create(char *path, unsigned int mode);
+bool		os_dir_create(const char *path, unsigned int mode);
 
 /**
- * @brief Delete a directory in the os filesystem.
- * @param path The path where the directory that will be deleted.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Delete a folder in the OS filesystem.
+ * `
+ * @param path The path must not be NULL.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `path` is NULL or an error occurred.
 */
-bool		os_dir_delete(char *path);
+bool		os_dir_delete(const char *path);
 
 /**
- * @brief Move a directory.
- * @param new_path The old path of the directory.
- * @param new_path The new path of the directory.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Move a directory in the OS filesystem.
+ * 
+ * @param old_path The old path must not be NULL.
+ * @param new_path The new path must not be NULL
+ * .
+ * @retval TRUE for success.
+ * @retval FALSE if `old_path` or `new_path` is NULL or an error occurred.
 */
-bool		os_dir_move(char *old_path, char *new_path);
+bool		os_dir_move(const char *old_path, const char *new_path);
 
-// +===----- OS Files -----===+ //
+// +===----- File functions -----===+ //
 
 /**
- * @brief Create a file in the os filesystem.
- * @param path The path where the file that will be created.
- * @param mode The mode to open the file (r, r+, w, w+, a, a+ : read the man)
- * @return The FILE that will be created.
+ * @brief Create a file in the OS filesystem.
+ * 
+ * @param path The path must not be NULL.
+ * @param mode The mode to open the file (`man fopen`)
+ * 
+ * @retval A pointer to a FILE.
+ * @retval NULL if `path` or `mode` is NULL, if file already exists
+ * 		 or an error occurred.
+ * 
+ * @warning Caller must free returned pointer with `fclose()`.
 */
-FILE		*os_file_create(char *path, char *mode);
+FILE		*os_file_create(const char *path, const char *mode);
 
 /**
- * @brief Delete a file in the os filesystem.
- * @param path The path where the file that will be deleted.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Delete a file in the OS filesystem.
+ * `
+ * @param path The path must not be NULL.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `path` is NULL or an error occurred.
 */
-bool		os_file_delete(char *path);
+bool		os_file_delete(const char *path);
 
 /**
- * @brief Open a file in the os filesystem.
- * @param path The path where the file that will be opened.
- * @param mode The mode to open the file (r, r+, w, w+, a, a+ : read the man)
- * @return The FILE that will be opened.
+ * @brief Open a file in the OS filesystem.
+ * 
+ * @param path The path must a new  not be NULL.
+ * @param mode The mode to open the file (`man fopen`)
+ * 
+ * @retval A pointer to a FILE.
+ * @retval NULL if `path` or `mode` is NULL, if file already exists
+ * 		 or an error occurred.
+ * 
+ * @warning Caller must free returned pointer with `fclose()`.
 */
-FILE		*os_file_open(char *path, char *mode);
-
+FILE		*os_file_open(const char *path, const char *mode);
+ 
 /**
- * @brief Move a file.
- * @param new_path The old path of the file.
- * @param new_path The new path of the file.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Move a file in the OS filesystem.
+ * 
+ * @param old_path The old path must not be NULL.
+ * @param new_path The new path must not be NULL
+ * .
+ * @retval TRUE for success.
+ * @retval FALSE if `old_path` or `new_path` is NULL or an error occurred.
 */
-bool		os_file_move(char *old_path, char *new_path);
+bool		os_file_move(const char *old_path, const char *new_path);
 
 /**
- * @brief Write inside a file.
- * @param file The file that will be edited.
- * @param data The new data content.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Overwrites the contents of a file with the data.
+ * 
+ * @param file The file must not be NULL.
+ * @param data The data must not be NULL.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `file` or `data` is NULL or an error occurred.
 */
-bool		os_file_write(FILE *file, char *data);
+bool		os_file_write(FILE *file, const char *data);
 
 /**
- * @brief Save a file content.
- * @param file The file that will be saved.
-*/
-void		os_file_save(FILE *file);
-
-/**
- * @brief Get a file content.
- * @param file The file.
- * @return The content of the file.
+ * @brief Recover the contents of a file.
+ * 
+ * @param file The file must  a new not be NULL.
+ * 
+ * @retval A newly allocated string owned by caller.
+ * @retval NULL if `file` is NULL or an error occurred.
+ * 
+ * @warning Caller must free returned pointer with `free()`.
 */
 char		*os_file_get_data(FILE *file);
 
