@@ -7,40 +7,6 @@
 #include "systems/filesystem/commands.h"
 #include "systems/filesystem/system.h"
 
-// +===----- OS Errors -----===+ //
-
-t_ErrorCode	get_file_error(void)
-{
-	switch (errno)
-		{
-			case EEXIST:
-				return (ERR_FILE_EXIST);
-			case EACCES:
-				return (ERR_FILE_ACCESS);
-			case ENOENT:
-				return (ERR_FILE_NOT_FOUND);
-			default:
-				return (ERR_OPERATION_FAILED);
-		}
-	return (ERR_OPERATION_FAILED);
-}
-
-t_ErrorCode	get_dir_error(void)
-{
-	switch (errno)
-		{
-			case EEXIST:
-				return (ERR_DIR_EXIST);
-			case EACCES:
-				return (ERR_DIR_ACCESS);
-			case ENOENT:
-				return (ERR_DIR_NOT_FOUND);
-			default:
-				return (ERR_OPERATION_FAILED);
-		}
-	return (ERR_OPERATION_FAILED);
-}
-
 /**
  * @brief Initialize the VFS root. Retrive all subdirs and files.
  * @param root The root directory of the VFS.

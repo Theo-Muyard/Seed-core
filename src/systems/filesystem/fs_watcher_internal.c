@@ -153,16 +153,6 @@ static t_MovePending	*find_pending(
 
 // +===----- Functions -----===+ //
 
-bool		is_dir(const char *path)
-{
-	struct stat	_st;
-
-	TEST_NULL(path, false);
-	if (0 != lstat(path, &_st))
-		return (false);
-	return (S_ISDIR(_st.st_mode));
-}
-
 char		*watch_get_path(t_WatchCtx *ctx, int wd)
 {
 	size_t			_i;

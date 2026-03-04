@@ -1,95 +1,70 @@
-#include "tools/memory.h"
-#include "systems/filesystem/vfs/_internal.h"
+#include "common/memory.h"
+#include "systems/filesystem/fs_vfs.h"
 
-// +===----- Path -----===+ //
+// +===----- Resolving functions -----===+ //
 
-char	*join_path(const char *base, const char *path)
+char		*vfs_get_dir_relative_path(const t_Directory *dir)
 {
-	char	*joined_path;
-	size_t	_base_len;
-	size_t	_path_len;
-	size_t	_len;
-	int		_need_slash;
+	RETURN_IF_NULL(dir, NULL);
 
-	TEST_NULL(base, NULL);
-	TEST_NULL(path, NULL);
+	t_Directory	*_tmp = (t_Directory *)dir;
+	size_t	_size = 1;
 
-	_base_len = strlen(base);
-	_path_len = strlen(path);
-	_len = _base_len + _path_len;
-	_need_slash = (_base_len > 0 && base[_base_len - 1] != '/');
-	joined_path = malloc((_len + _need_slash + 1) * sizeof(char));
-	TEST_NULL(joined_path, NULL);
-	memcpy(joined_path, base, _base_len);
-	if (_need_slash)
-		joined_path[_base_len++] = '/';
-	memcpy(
-		joined_path + _base_len,
-		path,
-		_path_len
-	);
-	joined_path[_len + _need_slash] = '\0';
-	return (joined_path);
-}
-
-char		*directory_get_relative_path(const t_Directory *dir)
-{
-	t_Directory	*_tmp;
-	char		*path;
-	size_t		_size;
-	size_t		_len;
-	size_t		_start;
-
-	TEST_NULL(dir, NULL);
-	_tmp = (t_Directory *)dir;
-	_size = 1;
 	while (_tmp)
 	{
-		TEST_NULL(_tmp->dirname, NULL);
+		RETURN_IF_NULL(_tmp->dirname, NULL);
+
 		_size += strlen(_tmp->dirname) + 1;
 		_tmp = _tmp->parent;
 	}
-	path = malloc(_size * sizeof(char));
-	TEST_NULL(path, NULL);
+
+	char	*path = malloc(_size * sizeof(char));
+	RETURN_IF_NULL(path, NULL);
+
 	path[_size - 1] = '\0';
 	_tmp = (t_Directory *)dir;
-	_start = _size - 1;
+	size_t	_start = _size - 1;
 	while (_tmp)
 	{
-		_len = strlen(_tmp->dirname);
+		size_t	_len = strlen(_tmp->dirname);
 		_start -= _len;
 		memcpy(path + _start, _tmp->dirname, _len);
 		path[--_start] = '/';
 		_tmp = _tmp->parent;
 	}
+
 	return (path);
 }
 
-char		*file_get_relative_path(const t_File *file)
+char		*vfs_get_file_relative_path(const t_File *file)
 {
-	char		*path;
-	char		*_tmp;
-	size_t		_size;
-	size_t		_path_len;
-	size_t		_filename_len;
+	RETURN_IF_NULL(file, NULL);
 
-	TEST_NULL(file, NULL);
-	path = directory_get_relative_path(file->parent);
-	TEST_NULL(path, NULL);
-	_path_len = strlen(path);
-	_filename_len = strlen(file->filename);
-	_size = _path_len + 1 + _filename_len + 1;
-	_tmp = realloc(path, _size * sizeof(char));
-	if (NULL == _tmp)
-		return (free(path), NULL);
+	char	*path = directory_get_relative_path(file->parent);
+	RETURN_IF_NULL(path, NULL);
+
+	size_t	_path_len = strlen(path);
+	size_t	_filename_len = strlen(file->filename);
+	size_t	_size = _path_len + 1 + _filename_len + 1;
+
+	char		*_tmp = realloc(path, _size * sizeof(char));
+	GOTO_IF_NULL(_tmp, exit_free_path);
+
 	path = _tmp;
 	path[_path_len++] = '/';
 	memcpy(path + _path_len, file->filename, _filename_len);
 	path[_path_len + _filename_len] = '\0';
+
 	return (path);
+
+	/* GOTO EXIT */
+	exit_free_path:
+		return (free(path), NULL);
 }
 
-// +===----- Directory -----===+ //
+// +===----- Directory functions -----===+ //
+
+// TODO: Reformat functions
 
 t_Directory	*directory_create(t_Directory *parent, const char *dirname)
 {
@@ -114,9 +89,9 @@ t_Directory	*directory_create(t_Directory *parent, const char *dirname)
 	dir->files_count = 0;
 	dir->files_capacity = 0;
 
-	dir->subdir = NULL;
-	dir->subdir_count = 0;
-	dir->subdir_capacity = 0;
+	dir->subdirs = NULL;
+	dir->subdirs_count = 0;
+	dir->subdirs_capacity = 0;
 	return (dir);
 }
 
@@ -133,13 +108,13 @@ void		directory_destroy(t_Directory *dir)
 		_i++;
 	}
 	_i = 0;
-	while (_i < dir->subdir_count)
+	while (_i < dir->subdirs_count)
 	{
-		directory_destroy(dir->subdir[_i]);
+		directory_destroy(dir->subdirs[_i]);
 		_i++;
 	}
 	free(dir->files);
-	free(dir->subdir);
+	free(dir->subdirs);
 	free(dir->dirname);
 	free(dir);
 }
@@ -327,24 +302,24 @@ bool		directory_subdir_add(t_Directory *dir, t_Directory *subdir)
 
 	TEST_NULL(dir, false);
 	TEST_NULL(subdir, false);
-	if (dir->subdir_capacity == 0)
+	if (dir->subdirs_capacity == 0)
 	{
-		dir->subdir = malloc(DIR_ALLOC * sizeof(t_Directory *));
-		TEST_NULL(dir->subdir, false);
-		dir->subdir_capacity = DIR_ALLOC;
+		dir->subdirs = malloc(DIR_ALLOC * sizeof(t_Directory *));
+		TEST_NULL(dir->subdirs, false);
+		dir->subdirs_capacity = DIR_ALLOC;
 	}
-	if (dir->subdir_count >= dir->subdir_capacity)
+	if (dir->subdirs_count >= dir->subdirs_capacity)
 	{
 		_tmp = realloc(
-			dir->subdir,
-			DIR_ALLOC + dir->subdir_capacity * sizeof(t_Directory *)
+			dir->subdirs,
+			DIR_ALLOC + dir->subdirs_capacity * sizeof(t_Directory *)
 		);
 		TEST_NULL(_tmp, false);
-		dir->subdir = _tmp;
-		dir->subdir_capacity += DIR_ALLOC;
+		dir->subdirs = _tmp;
+		dir->subdirs_capacity += DIR_ALLOC;
 	}
-	dir->subdir[dir->subdir_count] = subdir;
-	dir->subdir_count++;
+	dir->subdirs[dir->subdirs_count] = subdir;
+	dir->subdirs_count++;
 	subdir->parent = dir;
 	return (true);
 }
@@ -357,17 +332,17 @@ bool		directory_subdir_remove(t_Directory *dir, t_Directory *subdir)
 	TEST_NULL(subdir, false);
 
 	_i = 0;
-	while (_i < dir->subdir_count)
+	while (_i < dir->subdirs_count)
 	{
-		if (dir->subdir[_i] == subdir)
+		if (dir->subdirs[_i] == subdir)
 		{
-			dir->subdir[_i] = NULL;
+			dir->subdirs[_i] = NULL;
 			memmove(
-				dir->subdir + _i,
-				dir->subdir + _i + 1,
-				(dir->subdir_count - _i - 1) * sizeof(t_Directory *)
+				dir->subdirs + _i,
+				dir->subdirs + _i + 1,
+				(dir->subdirs_count - _i - 1) * sizeof(t_Directory *)
 			);
-			dir->subdir_count--;
+			dir->subdirs_count--;
 			subdir->parent = NULL;
 			return (true);
 		}
@@ -384,10 +359,10 @@ t_Directory	*directory_find_subdir(t_Directory *parent, const char *dirname)
 	TEST_NULL(dirname, NULL);
 
 	_i = 0;
-	while (_i < parent->subdir_count)
+	while (_i < parent->subdirs_count)
 	{
-		if (strcmp(dirname, parent->subdir[_i]->dirname) == 0)
-			return (parent->subdir[_i]);
+		if (strcmp(dirname, parent->subdirs[_i]->dirname) == 0)
+			return (parent->subdirs[_i]);
 		_i++;
 	}
 	return (NULL);
@@ -463,9 +438,9 @@ bool		directory_contains_subdir(t_Directory *dir, t_Directory *subdir)
 	TEST_NULL(subdir, NULL);
 
 	_i = 0;
-	while (_i < dir->subdir_count)
+	while (_i < dir->subdirs_count)
 	{
-		if (dir->subdir[_i] == subdir)
+		if (dir->subdirs[_i] == subdir)
 			return (true);
 		_i++;
 	}

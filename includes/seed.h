@@ -122,16 +122,16 @@ typedef struct	s_CmdGetLine
 {
 	size_t	buffer_id;	/* The buffer ID */
 	ssize_t	line;	/* The line */
-	char	*out_data;	/* The line data */
+	char		*out_data;	/* The line data */
 	size_t	out_size;	/* The data size */
 }	t_CmdGetLine;
 
 typedef struct	s_CmdInsertData
 {
-	size_t		buffer_id;	/* The buffer ID */
-	ssize_t		line;	/* The line */
-	ssize_t		index;	/* The index */
-	size_t		size;	/* The data size */
+	size_t	buffer_id;	/* The buffer ID */
+	ssize_t	line;	/* The line */
+	ssize_t	index;	/* The index */
+	size_t	size;	/* The data size */
 	const char	*data;	/* The data content */
 }	t_CmdInsertData;
 
@@ -148,23 +148,23 @@ typedef struct	s_CmdDeleteData
 
 typedef struct	s_CmdOpenRoot
 {
-	char	*path;	/* The absolute path of the directory */
+	const char	*path;	/* The absolute path of the directory */
 }	t_CmdOpenRoot;
 
 typedef struct	s_CmdCreateDir
 {
-	char	*path;	/* The relative path of the directory */
+	const char	*path;	/* The relative path of the directory */
 }	t_CmdCreateDir;
 
 typedef struct	s_CmdDeleteDir
 {
-	char	*path;	/* The relative path of the directory */
+	const char	*path;	/* The relative path of the directory */
 }	t_CmdDeleteDir;
 
 typedef struct	s_CmdMoveDir
 {
-	char	*old_path;	/* The old relative path of the directory */
-	char	*new_path;	/* The new relative path of the directory */
+	const char	*old_path;	/* The old relative path of the directory */
+	const char	*new_path;	/* The new relative path of the directory */
 }	t_CmdMoveDir;
 
 typedef struct	s_CmdCreateFile
