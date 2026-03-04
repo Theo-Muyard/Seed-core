@@ -14,32 +14,30 @@ typedef struct s_Manager	t_Manager;
 /* Error codes for API manager */
 typedef enum	e_ErrorCode
 {
-	ERR_SUCCESS = 0, /* Success */
+	ERR_SUCCESS = 0,					 /* Success */
 
-	ERR_INTERNAL_MEMORY,	/* Internal memory error */
-	ERR_OPERATION_FAILED,	/* Operation failed */
-	ERR_PERMISSION_DENIED,	/* Permission denied */
+	ERR_INTERNAL_MEMORY,				/* Internal memory error */
+	ERR_OPERATION_FAILED,				/* Operation failed */
+	ERR_PERMISSION_DENIED,				/* Permission denied */
 
-	ERR_INVALID_MANAGER,	/* Invalid manager */
-	ERR_INVALID_PAYLOAD,	/* Invalid payload content */
-	ERR_INVALID_COMMAND,	/* Invalid command */
-	ERR_INVALID_COMMAND_ID,	/* Invalid command ID*/
+	ERR_INVALID_MANAGER,				/* Invalid manager */
+	ERR_INVALID_PAYLOAD,				/* Invalid payload content */
+	ERR_INVALID_COMMAND,				/* Invalid command */
+	ERR_INVALID_COMMAND_ID,				/* Invalid command ID*/
 
-	ERR_DISPATCHER_NOT_INITIALIZED,	/* Dispatcher not initialized */
+	ERR_DISPATCHER_NOT_INITIALIZED,		/* Dispatcher not initialized */
 	ERR_WRITING_CONTEXT_NOT_INITIALIZED,	/* Writing context not initialized */
-	ERR_FS_CONTEXT_NOT_INITIALIZED,	/* Filesystem context not initialized */
+	ERR_FS_CONTEXT_NOT_INITIALIZED,		/* Filesystem context not initialized */
 
-	/* +==-- Writing system errors --==+ */
-	ERR_BUFFER_NOT_FOUND,	/* Buffer not found */
-	ERR_LINE_NOT_FOUND,	/* Line not found */
+	ERR_BUFFER_NOT_FOUND,				/* Buffer not found */
+	ERR_LINE_NOT_FOUND,				/* Line not found */
 
-	/* +==-- Filesystem errors --==+ */
-	ERR_DIR_NOT_FOUND,	/* Directory not found */
-	ERR_DIR_ACCESS,	/* Directory access denied */
-	ERR_DIR_EXIST,	/* Directory aleady exist */
-	ERR_FILE_NOT_FOUND,	/* File not found */
-	ERR_FILE_ACCESS,	/* File access denied */
-	ERR_FILE_EXIST	/* File already exist */
+	ERR_DIR_NOT_FOUND,				/* Directory not found */
+	ERR_DIR_ACCESS,					/* Directory access denied */
+	ERR_DIR_EXIST,					/* Directory aleady exist */
+	ERR_FILE_NOT_FOUND,				/* File not found */
+	ERR_FILE_ACCESS,					/* File access denied */
+	ERR_FILE_EXIST					/* File already exist */
 }	t_ErrorCode;
 
 /* Command ID for API manager */

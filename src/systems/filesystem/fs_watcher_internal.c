@@ -1,6 +1,4 @@
-#include "systems/filesystem/vfs/_internal.h"
-#include "systems/filesystem/watcher/_internal.h"
-#include "tools/memory.h"
+#include "systems/filesystem/fs_watcher_internal.h"
 
 // +===----- Static functions -----===+ //
 

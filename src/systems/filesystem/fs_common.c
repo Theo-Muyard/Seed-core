@@ -38,31 +38,31 @@ bool		is_dir(const char *path)
 t_ErrorCode	handle_dir_error(void)
 {
 	switch (errno)
-		{
-			case EEXIST:
-				return (ERR_DIR_EXIST);
-			case EACCES:
-				return (ERR_DIR_ACCESS);
-			case ENOENT:
-				return (ERR_DIR_NOT_FOUND);
-			default:
-				return (ERR_OPERATION_FAILED);
-		}
+	{
+		case EEXIST:
+			return (ERR_DIR_EXIST);
+		case EACCES:
+			return (ERR_DIR_ACCESS);
+		case ENOENT:
+			return (ERR_DIR_NOT_FOUND);
+		default:
+			return (ERR_OPERATION_FAILED);
+	}
 	return (ERR_OPERATION_FAILED);
 }
 
 t_ErrorCode	handle_file_error(void)
 {
 	switch (errno)
-		{
-			case EEXIST:
-				return (ERR_FILE_EXIST);
-			case EACCES:
-				return (ERR_FILE_ACCESS);
-			case ENOENT:
-				return (ERR_FILE_NOT_FOUND);
-			default:
-				return (ERR_OPERATION_FAILED);
-		}
+	{
+		case EEXIST:
+			return (ERR_FILE_EXIST);
+		case EACCES:
+			return (ERR_FILE_ACCESS);
+		case ENOENT:
+			return (ERR_FILE_NOT_FOUND);
+		default:
+			return (ERR_OPERATION_FAILED);
+	}
 	return (ERR_OPERATION_FAILED);
 }

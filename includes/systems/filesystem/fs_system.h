@@ -12,19 +12,15 @@
 # define SEED_FILESYSTEM_SYSTEM_H
 
 # include "dependency.h"
-# include "core/dispatcher.h"
-
-// +===----- Types -----===+ //
-
-typedef struct s_Manager		t_Manager;
-typedef struct s_Directory		t_Directory;
+# include "core/manager.h"
+# include "systems/filesystem/fs_vfs.h"
 
 /* The filesystem context of the seed core */
 typedef struct s_FileSystemCtx
 {
 	t_Directory	*root;	/* The root directory */
 	char		*root_path;	/* The absolute root path */
-	size_t		path_len;	/* The path length */
+	size_t	path_len;	/* The path length */
 }	t_FileSystemCtx;
 
 // +===----- Commands -----===+ //
