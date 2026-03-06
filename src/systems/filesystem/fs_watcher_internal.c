@@ -3,46 +3,60 @@
 // +===----- Static functions -----===+ //
 
 /**
- * @brief Add a new watch entry.
- * @param ctx The watcher context.
- * @param path The absolute path of the entry.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Add a new watch entry in the watch context.
+ * 
+ * @param ctx The context must not be NULL.
+ * @param path The path must not be NULL.
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `ctx` or `path` is NULL or an error occurred.
 */
 static bool	watch_add_one(t_WatchCtx *ctx, const char *path)
 {
-	int				_wd;
-	t_WatchEntry	*_entry;
+	RETURN_IF_NULL(ctx, false);
+	RETURN_IF_NULL(path, false);
 
-	_wd = inotify_add_watch(ctx->fd, path, WATCH_MASK);
+	int	_wd = inotify_add_watch(ctx->fd, path, WATCH_MASK);
 	if (_wd < 0)
 		return (false);
-	if (false == entries_reserve(ctx, ctx->entry_count + 1))
-		return (inotify_rm_watch(ctx->fd, _wd), false);
-	_entry = malloc(sizeof(t_WatchEntry));
-	TEST_NULL(_entry, false);
-	_entry->wd = _wd;
+
+	GOTO_IF_FALSE(
+		entries_reserve(ctx, ctx->entry_count + 1),
+		exit_inotify_rm_watch
+	);
+	
+	t_WatchEntry	*_entry = malloc(sizeof(t_WatchEntry));
+	GOTO_IF_NULL(_entry, exit_inotify_rm_watch);
+
 	_entry->path = ft_strdup(path);
-	if (NULL == _entry->path)
-		return (inotify_rm_watch(ctx->fd, _wd), false);
+	GOTO_IF_NULL(_entry->path, exit_inotify_rm_watch);
+	_entry->wd = _wd;
+
 	ctx->entries[ctx->entry_count] = _entry;
 	ctx->entry_count++;
+
 	return (true);
+
+	/* GOTO EXIT */
+	exit_inotify_rm_watch:
+		return (inotify_rm_watch(ctx->fd, _wd), false);
 }
 
 /**
- * @brief Remove a watch entry by this wd.
- * @param ctx The watch context.
- * @param wd The wd of the entry.
+ * @brief Remove a watch entry by its wd.
+ *
+ * @param ctx The context must not be NULL.
+ * @param wd The entry wd.
 */
 static void	watch_remove_one(t_WatchCtx *ctx, int wd)
 {
-	size_t			_i;
-	t_WatchEntry	*_entry;
+	if (NULL == ctx || wd < 0)
+		return ;
 
-	_i = 0;
+	size_t	_i = 0;
 	while (_i < ctx->entry_count)
 	{
-		_entry = ctx->entries[_i];
+		t_WatchEntry	*_entry = ctx->entries[_i];
 		if (_entry->wd == wd)
 		{
 			free(_entry->path);
@@ -58,55 +72,59 @@ static void	watch_remove_one(t_WatchCtx *ctx, int wd)
 }
 
 /**
- * @brief Create a move pending.
- * @param ctx The watcher context.
- * @param cookie The move event cookie.
- * @param path The path of the entry.
- * @param isdir The entry is a directory?
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Add a new pending in the watch context.
+ * 
+ * @param ctx The context must not be NULL.
+ * @param cookie The inotify cookie.
+ * @param path The path must not be NULL.
+ * @param isdir Pending is a folder?
+ * 
+ * @retval TRUE for success.
+ * @retval FALSE if `ctx` or `path` is NULL or an error occurred.
 */
-static bool	create_pending(
-	t_WatchCtx *ctx,
-	uint32_t cookie,
-	const char *path,
-	bool isdir
+static bool	pending_add_one(
+	t_WatchCtx *ctx, uint32_t cookie,
+	const char *path, bool isdir
 )
 {
-	t_MovePending	*_pending;
+	RETURN_IF_FALSE(
+		pending_reserve(ctx, ctx->pending_count + 1),
+		false
+	);
 
-	if (false == pending_reserve(ctx, ctx->pending_count + 1))
-		return (false);
+	t_MovePending	*_pending = malloc(sizeof(t_MovePending));
+	RETURN_IF_NULL(_pending, false);
 
-	_pending = malloc(sizeof(t_MovePending));
-	TEST_NULL(_pending, false);
-	_pending->cookie = cookie;
 	_pending->from_path = ft_strdup(path);
-	if (NULL == _pending->from_path)
-		return (free(_pending), false);
+	GOTO_IF_NULL(_pending, exit_free_pending);
+
+	_pending->cookie = cookie;
 	_pending->is_dir = isdir;
 	ctx->pending[ctx->pending_count] = _pending;
 	ctx->pending_count++;
+
 	return (true);
+
+	/* GOTO EXIT */
+	exit_free_pending:
+		return (free(_pending), false);
 }
 
 /**
- * @brief Remove a move pending.
- * @param ctx The watcher context.
- * @param cookie The move event cookie.
- * @return TRUE for success or FALSE if an error occured.
+ * @brief Remove a pending by its cookie.
+ * 
+ * @param ctx The context must not be NULL.
+ * @param cookie The inotify cookie.
 */
-static bool	delete_pending(
+static void	pending_remove_one(
 	t_WatchCtx *ctx,
 	uint32_t cookie
 )
 {
-	size_t			_i;
-	t_MovePending	*_pending;
-
-	_i = 0;
+	size_t	_i = 0;
 	while (_i < ctx->pending_count)
 	{
-		_pending = ctx->pending[_i];
+		t_MovePending	*_pending = ctx->pending[_i];
 		if (_pending->cookie == cookie)
 		{
 			free(_pending->from_path);
@@ -117,31 +135,29 @@ static bool	delete_pending(
 				(ctx->pending_count - _i - 1) * sizeof(t_MovePending *)
 			);
 			ctx->pending_count--;
-			return (true);
 		}
 		_i++;
 	}
-	return (false);
 }
 
 /**
  * @brief Remove a move pending.
- * @param ctx The watcher context.
- * @param cookie The move event cookie.
- * @return The move pending, or NULL.
+ * 
+ * @param ctx The context must not be NULL.
+ * @param cookie The inotify cookie.
+ * 
+ * @retval The pending.
+ * @retval NULL if `ctx` is NULL, pending not found or an error occurred.
 */
-static t_MovePending	*find_pending(
+static t_MovePending	*pending_find_one(
 	t_WatchCtx *ctx,
 	uint32_t cookie
 )
 {
-	size_t			_i;
-	t_MovePending	*_pending;
-
-	_i = 0;
+	size_t	_i = 0;
 	while (_i < ctx->pending_count)
 	{
-		_pending = ctx->pending[_i];
+		t_MovePending	*_pending = ctx->pending[_i];
 		if (_pending->cookie == cookie)
 			return (_pending);
 		_i++;

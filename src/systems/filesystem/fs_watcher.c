@@ -72,7 +72,7 @@ void		watcher_destroy(t_WatchCtx *ctx)
 bool		watcher_analyze(t_WatchCtx *ctx)
 {
 	size_t					_i;
-	struct inotify_event	*_event;
+	struct inotify_event		*_event;
 	char					_buffer[4096];
 	char					*_ptr;
 	ssize_t					_len;
