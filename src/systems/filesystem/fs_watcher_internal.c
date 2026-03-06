@@ -1,4 +1,6 @@
 #include "systems/filesystem/fs_watcher_internal.h"
+#include "systems/filesystem/fs_common.h"
+#include "common/memory.h"
 
 // +===----- Static functions -----===+ //
 
@@ -87,6 +89,9 @@ static bool	pending_add_one(
 	const char *path, bool isdir
 )
 {
+	RETURN_IF_NULL(ctx, false);
+	RETURN_IF_NULL(path, false);
+
 	RETURN_IF_FALSE(
 		pending_reserve(ctx, ctx->pending_count + 1),
 		false
@@ -116,11 +121,11 @@ static bool	pending_add_one(
  * @param ctx The context must not be NULL.
  * @param cookie The inotify cookie.
 */
-static void	pending_remove_one(
-	t_WatchCtx *ctx,
-	uint32_t cookie
-)
+static void	pending_remove_one(t_WatchCtx *ctx, uint32_t cookie)
 {
+	if (NULL == ctx)
+		return ;
+
 	size_t	_i = 0;
 	while (_i < ctx->pending_count)
 	{
@@ -149,11 +154,10 @@ static void	pending_remove_one(
  * @retval The pending.
  * @retval NULL if `ctx` is NULL, pending not found or an error occurred.
 */
-static t_MovePending	*pending_find_one(
-	t_WatchCtx *ctx,
-	uint32_t cookie
-)
+static t_MovePending	*pending_find_one(t_WatchCtx *ctx, uint32_t cookie)
 {
+	RETURN_IF_NULL(ctx, NULL);
+
 	size_t	_i = 0;
 	while (_i < ctx->pending_count)
 	{
@@ -162,6 +166,7 @@ static t_MovePending	*pending_find_one(
 			return (_pending);
 		_i++;
 	}
+
 	return (NULL);
 }
 
@@ -169,29 +174,31 @@ static t_MovePending	*pending_find_one(
 
 char		*watch_get_path(t_WatchCtx *ctx, int wd)
 {
-	size_t			_i;
-	t_WatchEntry	*_entry;
+	RETURN_IF_NULL(ctx, NULL);
+	if (wd < 0)
+		return (NULL);
 
-	_i = 0;
+	size_t	_i = 0;
 	while (_i < ctx->entry_count)
 	{
-		_entry = ctx->entries[_i];
+		t_WatchEntry	*_entry = ctx->entries[_i];
 		if (_entry->wd == wd)
 			return (_entry->path);
 		_i++;
 	}
+
 	return (NULL);
 }
 
-int			watch_get_wd(t_WatchCtx *ctx, const char *path)
+int		watch_get_wd(t_WatchCtx *ctx, const char *path)
 {
-	size_t			_i;
-	t_WatchEntry	*_entry;
+	RETURN_IF_NULL(ctx, -1);
+	RETURN_IF_NULL(path, -1);
 
-	_i = 0;
+	size_t	_i = 0;
 	while (_i < ctx->entry_count)
 	{
-		_entry = ctx->entries[_i];
+		t_WatchEntry	*_entry = ctx->entries[_i];
 		if (strcmp(_entry->path, path) == 0)
 			return (_entry->wd);
 		_i++;
@@ -201,283 +208,299 @@ int			watch_get_wd(t_WatchCtx *ctx, const char *path)
 
 bool		queue_reserve(t_WatchCtx *ctx, size_t new_count)
 {
-	t_FsEvent		**_tmp;
-	size_t			_new_cap;
-	
+	RETURN_IF_NULL(ctx, false);
+
 	if (new_count <= ctx->event_capacity)
 		return (true);
+
 	if (0 == ctx->event_capacity)
 	{
 		ctx->event_queue = malloc(EVENT_ALLOC * sizeof(t_FsEvent *));
-		TEST_NULL(ctx->event_queue, false);
+		RETURN_IF_NULL(ctx->event_queue, false);
+
 		ctx->event_capacity = EVENT_ALLOC;
 	}
 	else
 	{
-		_new_cap = ctx->event_capacity;
+		size_t	_new_cap = ctx->event_capacity;
 		while (_new_cap < new_count)
 			_new_cap *= 2;
-		_tmp = realloc(ctx->event_queue, _new_cap * sizeof(t_FsEvent *));
-		TEST_NULL(_tmp, false);
+
+		t_FsEvent	**_tmp = realloc(ctx->event_queue, _new_cap * sizeof(t_FsEvent *));
+		RETURN_IF_NULL(_tmp, false);
+
 		ctx->event_queue = _tmp;
 		ctx->event_capacity = _new_cap;
 	}
+
 	return (true);
 }
 
 bool		pending_reserve(t_WatchCtx *ctx, size_t new_count)
 {
-	t_MovePending	**_tmp;
-	size_t			_new_cap;
-	
+	RETURN_IF_NULL(ctx, false);
+
 	if (new_count <= ctx->pending_capacity)
 		return (true);
+
 	if (0 == ctx->pending_capacity)
 	{
-		ctx->pending = malloc(PENDING_ALLOC * sizeof(t_MovePending *));
-		TEST_NULL(ctx->pending, false);
-		ctx->pending_capacity = PENDING_ALLOC;
+		ctx->pending = malloc(EVENT_ALLOC * sizeof(t_MovePending *));
+		RETURN_IF_NULL(ctx->pending, false);
+
+		ctx->pending_capacity = EVENT_ALLOC;
 	}
 	else
 	{
-		_new_cap = ctx->pending_capacity;
+		size_t	_new_cap = ctx->pending_capacity;
 		while (_new_cap < new_count)
 			_new_cap *= 2;
-		_tmp = realloc(ctx->pending, _new_cap * sizeof(t_MovePending *));
-		TEST_NULL(_tmp, false);
+
+		t_MovePending	**_tmp = realloc(ctx->pending, _new_cap * sizeof(t_MovePending *));
+		RETURN_IF_NULL(_tmp, false);
+
 		ctx->pending = _tmp;
 		ctx->pending_capacity = _new_cap;
 	}
+
 	return (true);
 }
 
 bool		entries_reserve(t_WatchCtx *ctx, size_t new_count)
 {
-	t_WatchEntry	**_tmp;
-	size_t			_new_cap;
-	
+	RETURN_IF_NULL(ctx, false);
+
 	if (new_count <= ctx->entry_capacity)
 		return (true);
+
 	if (0 == ctx->entry_capacity)
 	{
-		ctx->entries = malloc(ENTRY_ALLOC * sizeof(t_WatchEntry *));
-		TEST_NULL(ctx->entries, false);
-		ctx->entry_capacity = ENTRY_ALLOC;
+		ctx->entries = malloc(EVENT_ALLOC * sizeof(t_WatchEntry *));
+		RETURN_IF_NULL(ctx->entries, false);
+
+		ctx->entry_capacity = EVENT_ALLOC;
 	}
 	else
 	{
-		_new_cap = ctx->entry_capacity;
+		size_t	_new_cap = ctx->entry_capacity;
 		while (_new_cap < new_count)
 			_new_cap *= 2;
-		_tmp = realloc(ctx->entries, _new_cap * sizeof(t_WatchEntry *));
-		TEST_NULL(_tmp, false);
+
+		t_WatchEntry	**_tmp = realloc(ctx->entries, _new_cap * sizeof(t_WatchEntry *));
+		RETURN_IF_NULL(_tmp, false);
+
 		ctx->entries = _tmp;
 		ctx->entry_capacity = _new_cap;
 	}
+
 	return (true);
 }
 
 bool		watch_add_recursive(t_WatchCtx *ctx, const char *path)
 {
-	DIR				*_dir;
-	struct dirent	*_entry;
-	char			*_child_path;
+	RETURN_IF_NULL(ctx, false);
+	RETURN_IF_NULL(path, false);
 
-	if (!is_dir(path))
-		return (true);
-	if (false == watch_add_one(ctx, path))
-		return (false);
-	_dir = opendir(path);
-	TEST_NULL(_dir, false);
-	while ((_entry = readdir(_dir)) != NULL)
+	RETURN_IF_FALSE(is_dir(path), false);
+	RETURN_IF_FALSE(watch_add_one(ctx, path), false);
+
+	DIR	*_dir = opendir(path);
+	GOTO_IF_NULL(_dir, exit_watch_remove);
+
+	char	*_child_path = NULL;
+	struct dirent	*_entry;
+	while (NULL != (_entry = readdir(_dir)))
 	{
 		if (strcmp(_entry->d_name, ".") == 0 || strcmp(_entry->d_name, "..") == 0)
 			continue ;
+
 		_child_path = join_path(path, _entry->d_name);
-		TEST_NULL(_child_path, false);
-		if (is_dir(_child_path) && false == watch_add_recursive(ctx, _child_path))
-			return (free(_child_path), closedir(_dir), false);
+		GOTO_IF_NULL(_child_path, exit_free_and_close);
+
+		if (is_dir(_child_path))
+			GOTO_IF_FALSE(watch_add_recursive(ctx, _child_path), exit_free_and_close);
 		free(_child_path);
 	}
+
 	closedir(_dir);
 	return (true);
+
+	/* GOTO EXIT */
+	exit_watch_remove:
+		int	_wd = watch_get_wd(ctx, path);
+		return (watch_remove_one(ctx, _wd), false);
+
+	exit_free_and_close:
+		return (free(_child_path), closedir(_dir), false);
 }
 
 bool		watch_remove_recursive(t_WatchCtx *ctx, const char *path)
 {
-	DIR				*_dir;
-	struct dirent	*_entry;
-	char			*_child_path;
-	int				_wd;
+	RETURN_IF_NULL(ctx, false);
+	RETURN_IF_NULL(path, false);
+	RETURN_IF_FALSE(is_dir(path), false);
 
-	if (!is_dir(path))
-		return (true);
-	_wd = watch_get_wd(ctx, path);
+	int	_wd = watch_get_wd(ctx, path);
 	if (_wd < 0)
 		return (false);
 	watch_remove_one(ctx, _wd);
-	_dir = opendir(path);
-	TEST_NULL(_dir, false);
-	while ((_entry = readdir(_dir)) != NULL)
+
+	DIR	*_dir = opendir(path);
+	RETURN_IF_NULL(_dir, false);
+
+	char	*_child_path = NULL;
+	struct dirent	*_entry;
+	while (NULL != (_entry = readdir(_dir)))
 	{
 		if (strcmp(_entry->d_name, ".") == 0 || strcmp(_entry->d_name, "..") == 0)
 			continue ;
+
 		_child_path = join_path(path, _entry->d_name);
-		TEST_NULL(_child_path, false);
+		GOTO_IF_NULL(_child_path, exit_free_and_close);
+
 		if (is_dir(_child_path))
-			watch_remove_recursive(ctx, _child_path);
+			GOTO_IF_FALSE(watch_remove_recursive(ctx, _child_path), exit_free_and_close);
 		free(_child_path);
 	}
+
 	closedir(_dir);
 	return (true);
+
+	/* GOTO EXIT */
+	exit_free_and_close:
+		return (free(_child_path), closedir(_dir), false);
 }
 
 bool		flush_pending(t_WatchCtx *ctx)
 {
-	t_MovePending	*_pending;
-	t_FsEvent		*_event;
+	RETURN_IF_NULL(ctx, false);
 
+	t_FsEvent	*_event = NULL;
 	while (ctx->pending_count > 0)
 	{
-		_pending = ctx->pending[0];
+		t_MovePending	*_pending = ctx->pending[0];
+		RETURN_IF_NULL(_pending, false);
 
-		if (false == queue_reserve(ctx, ctx->event_count + 1))
-			return (false);
+		RETURN_IF_FALSE(queue_reserve(ctx, ctx->event_count + 1), false);
 		
 		_event = malloc(sizeof(t_FsEvent));
-		TEST_NULL(_event, false);
+		RETURN_IF_NULL(_event, false);
+
+		_event->path = ft_strdup(_pending->from_path);
+		GOTO_IF_NULL(_event->path, exit_free_event);
+
 		_event->type = FS_EVENT_DELETE;
 		_event->isdir = _pending->is_dir;
-		_event->path = ft_strdup(_pending->from_path);
-		if (NULL == _event->path)
-			return (free(_event), false);
 		_event->new_path = NULL;
+
 		ctx->event_queue[ctx->event_count++] = _event;
-		free(_pending->from_path);
-		free(_pending);
 		memmove(
 			ctx->pending,
 			ctx->pending + 1,
 			(ctx->pending_count - 1) * sizeof(t_MovePending *)
 		);
+
 		ctx->pending_count--;
+		free(_pending->from_path);
+		free(_pending);
 	}
+
 	return (true);
+
+	/* GOTO EXIT */
+	exit_free_event:
+		return (free(_event), false);
 }
 
 t_FsEvent	*handle_event
 (
 	t_WatchCtx	*ctx,
-	struct inotify_event *event,
-	const char *path
+	struct inotify_event *event, const char *path
 )
 {
-	t_FsEvent		*ev;
-	t_MovePending	*_pending;
+	t_MovePending	*_pending = NULL;
+	if (event->mask & IN_MOVED_FROM)
+	{
+		pending_add_one(ctx, event->cookie, path, true);
+		return (NULL);
+	}
 
-	if ((event->mask & IN_MOVED_FROM) && (event->mask & IN_ISDIR))
-	{
-		printf("Move from dir: %s\n", path);
-		create_pending(ctx, event->cookie, path, true);
-		return (NULL);
-	}
-	else if (event->mask & IN_MOVED_FROM)
-	{
-		printf("Move from file: %s\n", path);
-		create_pending(ctx, event->cookie, path, false);
-		return (NULL);
-	}
-	ev = malloc(sizeof(t_FsEvent));
-	TEST_NULL(ev, NULL);
-	ev->isdir = false;
-	ev->new_path = NULL;
+	t_FsEvent	*ev = malloc(sizeof(t_FsEvent));
+	RETURN_IF_NULL(ev, NULL);
+
 	ev->type = FS_EVENT_OVERFLOW;
-	if ((event->mask & IN_MOVED_TO) && (event->mask & IN_ISDIR))
+	ev->path = NULL;
+	ev->new_path = NULL;
+	ev->isdir = false;
+
+	if (event->mask & IN_MOVED_TO)
 	{
-		printf("Move to dir: %s\n", path);
-		_pending = find_pending(ctx, event->cookie);
-		ev->isdir = true;
-		if (_pending)
-		{
-			ev->type = FS_EVENT_MOVE;
-			ev->path = ft_strdup(_pending->from_path);
-			if (NULL == ev->path)
-				return (free(ev), NULL);
-			ev->new_path = (char *)ft_strdup(path);
-			if (NULL == ev->new_path)
-				return (free(ev), NULL);
-			delete_pending(ctx, event->cookie);
-		}
-		else
+		if (event->mask & IN_ISDIR)
+			ev->isdir = true;
+
+		ev->new_path = ft_strdup(path);
+		GOTO_IF_NULL(ev->new_path, exit_free_event);
+
+		t_MovePending	*_pending = pending_find_one(ctx, event->cookie);
+		if (NULL == _pending)
 		{
 			ev->type = FS_EVENT_CREATE;
-			ev->path = (char *)path;
+			return (ev);
 		}
+
+		ev->type = FS_EVENT_MOVE;
+		ev->path = ft_strdup(_pending->from_path);
+		GOTO_IF_NULL(ev->path, exit_free_event);
+
+		pending_remove_one(ctx, event->cookie);		
 		return (ev);
 	}
-	else if (event->mask & IN_MOVED_TO)
-	{
-		printf("Move to file: %s\n", path);
-		_pending = find_pending(ctx, event->cookie);
-		if (_pending)
-		{
-			ev->type = FS_EVENT_MOVE;
-			ev->path = ft_strdup(_pending->from_path);
-			if (NULL == ev->path)
-				return (free(ev), NULL);
-			ev->new_path = (char *)ft_strdup(path);
-			if (NULL == ev->new_path)
-				return (free(ev), NULL);
-			delete_pending(ctx, event->cookie);
-		}
-		else
-		{
-			ev->type = FS_EVENT_CREATE;
-			ev->path = (char *)path;
-		}
-		return (ev);
-	}
+
 	ev->path = ft_strdup(path);
-	if (NULL == ev->path)
-		return (free(ev), NULL);
+	GOTO_IF_NULL(ev->path, exit_free_event);
+
 	if ((event->mask & IN_MOVE_SELF) || (event->mask & IN_DELETE_SELF))
 	{
-		printf("===> SELF\n");
 		ev->isdir = true;
 		ev->type = FS_EVENT_DELETE;
 		return (ev);
 	}
-	if ((event->mask & IN_CREATE) && (event->mask & IN_ISDIR))
+
+	if (event->mask & IN_CREATE)
 	{
-		printf("Create dir: %s\n", path);
-		if (false == watch_add_recursive(ctx, path))
-			return (free(ev->path), free(ev), NULL);
-		ev->isdir = true;
+		if (event->mask & IN_ISDIR)
+		{
+			GOTO_IF_FALSE(
+				watch_add_recursive(ctx, path),
+				exit_free_event
+			);
+			ev->isdir = true;
+		}
+
 		ev->type = FS_EVENT_CREATE;
 		return (ev);
 	}
-	else if (event->mask & IN_CREATE)
+
+	if (event->mask & IN_DELETE)
 	{
-		printf("Create file: %s\n", path);
-		ev->type = FS_EVENT_CREATE;
-		return (ev);
-	}
-	if ((event->mask & IN_DELETE || event->mask & IN_DELETE_SELF)
-		&& (event->mask & IN_ISDIR))
-	{
-		printf("Delete dir: %s\n", path);
-		if (false == watch_remove_recursive(ctx, path))
-			return (free(ev->path), free(ev), NULL);
-		ev->isdir = true;
+		if (event->mask & IN_ISDIR)
+		{
+			GOTO_IF_FALSE(
+				watch_remove_recursive(ctx, path),
+				exit_free_event
+			);
+			ev->isdir = true;
+		}
+
 		ev->type = FS_EVENT_DELETE;
 		return (ev);
 	}
-	else if (event->mask & IN_DELETE)
-	{
-		printf("Delete file: %s\n", path);
-		ev->type = FS_EVENT_DELETE;
-		return (ev);
-	}
-	free(ev->path);
-	return (NULL);
+
+	goto exit_free_event;
+
+	/* GOTO EXIT */
+	exit_free_event:
+		free(ev->path);
+		free(ev);
+		return (NULL);
 }

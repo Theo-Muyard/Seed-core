@@ -95,7 +95,8 @@ char		*watch_get_path(t_WatchCtx *ctx, int wd);
  * @param path The path must not be NULL.
  * 
  * @retval The wd.
- * @retval `-1` if the entry does'nt exist.
+ * @retval `-1` if `ctx` or `path` is NULL, the entry does'nt exist or
+ * 		an error occurred.
 */
 int 		watch_get_wd(t_WatchCtx *ctx, const char *path);
 
