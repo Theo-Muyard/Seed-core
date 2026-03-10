@@ -14,30 +14,30 @@ typedef struct s_Manager	t_Manager;
 /* Error codes for API manager */
 typedef enum	e_ErrorCode
 {
-	ERR_SUCCESS = 0,					 /* Success */
+	ERR_SUCCESS = 0,			/* Success */
 
-	ERR_INTERNAL_MEMORY,				/* Internal memory error */
-	ERR_OPERATION_FAILED,				/* Operation failed */
-	ERR_PERMISSION_DENIED,				/* Permission denied */
+	ERR_INTERNAL_MEMORY,			/* Internal memory error */
+	ERR_OPERATION_FAILED,			/* Operation failed */
+	ERR_PERMISSION_DENIED,			/* Permission denied */
 
-	ERR_INVALID_MANAGER,				/* Invalid manager */
-	ERR_INVALID_PAYLOAD,				/* Invalid payload content */
-	ERR_INVALID_COMMAND,				/* Invalid command */
-	ERR_INVALID_COMMAND_ID,				/* Invalid command ID*/
+	ERR_INVALID_MANAGER,			/* Invalid manager */
+	ERR_INVALID_PAYLOAD,			/* Invalid payload content */
+	ERR_INVALID_COMMAND,			/* Invalid command */
+	ERR_INVALID_COMMAND_ID,			/* Invalid command ID*/
 
 	ERR_DISPATCHER_NOT_INITIALIZED,		/* Dispatcher not initialized */
 	ERR_WRITING_CONTEXT_NOT_INITIALIZED,	/* Writing context not initialized */
 	ERR_FS_CONTEXT_NOT_INITIALIZED,		/* Filesystem context not initialized */
 
-	ERR_BUFFER_NOT_FOUND,				/* Buffer not found */
-	ERR_LINE_NOT_FOUND,				/* Line not found */
+	ERR_BUFFER_NOT_FOUND,			/* Buffer not found */
+	ERR_LINE_NOT_FOUND,			/* Line not found */
 
-	ERR_DIR_NOT_FOUND,				/* Directory not found */
-	ERR_DIR_ACCESS,					/* Directory access denied */
-	ERR_DIR_EXIST,					/* Directory aleady exist */
-	ERR_FILE_NOT_FOUND,				/* File not found */
-	ERR_FILE_ACCESS,					/* File access denied */
-	ERR_FILE_EXIST					/* File already exist */
+	ERR_DIR_NOT_FOUND,			/* Directory not found */
+	ERR_DIR_ACCESS,				/* Directory access denied */
+	ERR_DIR_EXIST,				/* Directory aleady exist */
+	ERR_FILE_NOT_FOUND,			/* File not found */
+	ERR_FILE_ACCESS,			/* File access denied */
+	ERR_FILE_EXIST				/* File already exist */
 }	t_ErrorCode;
 
 /* Command ID for API manager */
@@ -48,9 +48,9 @@ typedef enum	e_CommandId
 	CMD_WRITING_DELETE_BUFFER,	/* Delete a buffer */
 	CMD_WRITING_INSERT_LINE,	/* Insert a line */
 	CMD_WRITING_DELETE_LINE,	/* Delete a line */
-	CMD_WRITING_SPLIT_LINE,	/* Split a line */
-	CMD_WRITING_JOIN_LINE,	/* Join a line */
-	CMD_WRITING_GET_LINE,	/* Get a line content */
+	CMD_WRITING_SPLIT_LINE,		/* Split a line */
+	CMD_WRITING_JOIN_LINE,		/* Join a line */
+	CMD_WRITING_GET_LINE,		/* Get a line content */
 	CMD_WRITING_INSERT_TEXT,	/* Insert text inside a line */
 	CMD_WRITING_DELETE_TEXT,	/* Delete text inside a line */
 
@@ -70,7 +70,7 @@ typedef enum	e_CommandId
 /* The command content for API manager */
 typedef struct s_Command
 {
-	t_CommandId		id;	/* The command ID */
+	t_CommandId		id;		/* The command ID */
 	void			*payload;	/* The payload content */
 }	t_Command;
 
@@ -93,52 +93,52 @@ typedef struct	s_CmdDestroyBuffer
 typedef struct	s_CmdInsertLine
 {
 	size_t	buffer_id;	/* The buffer ID */
-	ssize_t	line;	/* The line index */
+	ssize_t	line;		/* The line index */
 }	t_CmdInsertLine;
 
 typedef struct	s_CmdDeleteLine
 {
 	size_t	buffer_id;	/* The buffer ID */
-	ssize_t	line;	/* The line index */
+	ssize_t	line;		/* The line index */
 }	t_CmdDeleteLine;
 
 typedef struct	s_CmdSplitLine
 {
 	size_t	buffer_id;	/* The buffer ID */
-	ssize_t	line;	/* The line */
-	size_t	index;	/* The index */
+	ssize_t	line;		/* The line */
+	size_t	index;		/* The index */
 }	t_CmdSplitLine;
 
 typedef struct	s_CmdJoinLine
 {
 	size_t	buffer_id;	/* The buffer ID */
-	size_t	dst;	/* The destination line */
-	size_t	src;	/* The source line */
+	size_t	dst;		/* The destination line */
+	size_t	src;		/* The source line */
 }	t_CmdJoinLine;
 
 typedef struct	s_CmdGetLine
 {
-	size_t	buffer_id;	/* The buffer ID */
-	ssize_t	line;	/* The line */
+	size_t	buffer_id;		/* The buffer ID */
+	ssize_t	line;			/* The line */
 	char		*out_data;	/* The line data */
-	size_t	out_size;	/* The data size */
+	size_t	out_size;		/* The data size */
 }	t_CmdGetLine;
 
 typedef struct	s_CmdInsertData
 {
 	size_t	buffer_id;	/* The buffer ID */
-	ssize_t	line;	/* The line */
-	ssize_t	index;	/* The index */
-	size_t	size;	/* The data size */
+	ssize_t	line;		/* The line */
+	ssize_t	index;		/* The index */
+	size_t	size;		/* The data size */
 	const char	*data;	/* The data content */
 }	t_CmdInsertData;
 
 typedef struct	s_CmdDeleteData
 {
 	size_t	buffer_id;	/* The buffer ID */
-	ssize_t	line;	/* The line */
-	size_t	index;	/* The index */
-	size_t	size;	/* The length of data that will be deleted */
+	ssize_t	line;		/* The line */
+	size_t	index;		/* The index */
+	size_t	size;		/* The length of data that will be deleted */
 }	t_CmdDeleteData;
 
 /* +==-- Filesystem payload --==+ */
@@ -183,7 +183,7 @@ typedef struct	s_CmdMoveFile
 
 typedef struct	s_CmdReadFile
 {
-	char	*path;	/* The relative path of the file */
+	char	*path;		/* The relative path of the file */
 	char	*out_data;	/* The data that was be readed */
 	size_t	out_len;	/* The length of the data */
 }	t_CmdReadFile;

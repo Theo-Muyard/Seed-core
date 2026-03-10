@@ -30,7 +30,7 @@ typedef struct	s_CommandEntry
 typedef struct	s_Dispatcher
 {
 	t_CommandEntry	*commands;	/* The commands */
-	size_t		count;	/* The count of commands */
+	size_t		count;		/* The count of commands */
 	size_t		capacity;	/* The capacity of commands */
 }	t_Dispatcher;
 

@@ -75,11 +75,12 @@ static t_ErrorCode manage_buffers_capacity(t_WritingCtx *ctx, size_t count)
 t_ErrorCode cmd_buffer_create(t_Manager *manager, const t_Command *cmd)
 {
 	t_WritingCtx	*_ctx = manager->writing_ctx;
+	RETURN_IF_NULL(_ctx, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_CmdCreateBuffer *_payload = cmd->payload;
 	RETURN_IF_NULL(_payload, ERR_INVALID_PAYLOAD);
 
 	size_t	_i = 0;
-	while (_i < _ctx->capacity && _ctx->buffers[_i])
+	while (_i < _ctx->capacity && _ctx->buffers && _ctx->buffers[_i])
 		_i++;
 
 	t_Buffer	*_buffer = buffer_create();
@@ -99,12 +100,14 @@ t_ErrorCode cmd_buffer_create(t_Manager *manager, const t_Command *cmd)
 t_ErrorCode cmd_buffer_destroy(t_Manager *manager, const t_Command *cmd)
 {
 	t_WritingCtx 		*_ctx = manager->writing_ctx;
+	RETURN_IF_NULL(_ctx, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_CmdDestroyBuffer	*_payload = cmd->payload;
 	RETURN_IF_NULL(_payload, ERR_INVALID_PAYLOAD);
 
 	if (_payload->buffer_id >= _ctx->capacity)
 		return (ERR_BUFFER_NOT_FOUND);
 
+	RETURN_IF_NULL(_ctx->buffers, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_Buffer	*_buffer = _ctx->buffers[_payload->buffer_id];
 	RETURN_IF_NULL(_buffer, ERR_BUFFER_NOT_FOUND);
 
@@ -120,9 +123,11 @@ t_ErrorCode cmd_buffer_destroy(t_Manager *manager, const t_Command *cmd)
 t_ErrorCode cmd_buffer_line_insert(t_Manager *manager, const t_Command *cmd)
 {
 	t_WritingCtx	*_ctx = manager->writing_ctx;
+	RETURN_IF_NULL(_ctx, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_CmdInsertLine	*_payload = cmd->payload;
 	RETURN_IF_NULL(_payload, ERR_INVALID_PAYLOAD);
 
+	RETURN_IF_NULL(_ctx->buffers, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_Buffer	*_buffer = _ctx->buffers[_payload->buffer_id];
 	RETURN_IF_NULL(_buffer, ERR_BUFFER_NOT_FOUND);
 
@@ -146,9 +151,11 @@ t_ErrorCode cmd_buffer_line_insert(t_Manager *manager, const t_Command *cmd)
 t_ErrorCode cmd_buffer_line_delete(t_Manager *manager, const t_Command *cmd)
 {
 	t_WritingCtx	*_ctx = manager->writing_ctx;
+	RETURN_IF_NULL(_ctx, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_CmdDeleteLine	*_payload = cmd->payload;
 	RETURN_IF_NULL(_payload, ERR_INVALID_PAYLOAD);
 
+	RETURN_IF_NULL(_ctx->buffers, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_Buffer	*_buffer = _ctx->buffers[_payload->buffer_id];
 	RETURN_IF_NULL(_buffer, ERR_BUFFER_NOT_FOUND);
 
@@ -162,9 +169,11 @@ t_ErrorCode cmd_buffer_line_delete(t_Manager *manager, const t_Command *cmd)
 t_ErrorCode cmd_buffer_line_split(t_Manager *manager, const t_Command *cmd)
 {
 	t_WritingCtx	*_ctx = manager->writing_ctx;
+	RETURN_IF_NULL(_ctx, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_CmdSplitLine	*_payload = cmd->payload;
 	RETURN_IF_NULL(_payload, ERR_INVALID_PAYLOAD);
 
+	RETURN_IF_NULL(_ctx->buffers, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_Buffer	*_buffer = _ctx->buffers[_payload->buffer_id];
 	RETURN_IF_NULL(_buffer, ERR_BUFFER_NOT_FOUND);
 
@@ -185,9 +194,11 @@ t_ErrorCode cmd_buffer_line_split(t_Manager *manager, const t_Command *cmd)
 t_ErrorCode cmd_buffer_line_join(t_Manager *manager, const t_Command *cmd)
 {
 	t_WritingCtx	*_ctx = manager->writing_ctx;
+	RETURN_IF_NULL(_ctx, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_CmdJoinLine	*_payload = cmd->payload;
 	RETURN_IF_NULL(_payload, ERR_INVALID_PAYLOAD);
 
+	RETURN_IF_NULL(_ctx->buffers, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_Buffer	*_buffer = _ctx->buffers[_payload->buffer_id];
 	RETURN_IF_NULL(_buffer, ERR_BUFFER_NOT_FOUND);
 
@@ -207,9 +218,11 @@ t_ErrorCode cmd_buffer_line_join(t_Manager *manager, const t_Command *cmd)
 t_ErrorCode cmd_buffer_get_line(t_Manager *manager, const t_Command *cmd)
 {
 	t_WritingCtx	*_ctx = manager->writing_ctx;
+	RETURN_IF_NULL(_ctx, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_CmdGetLine	*_payload = cmd->payload;
 	RETURN_IF_NULL(_payload, ERR_INVALID_PAYLOAD);
 
+	RETURN_IF_NULL(_ctx->buffers, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_Buffer	*_buffer = _ctx->buffers[_payload->buffer_id];
 	RETURN_IF_NULL(_buffer, ERR_BUFFER_NOT_FOUND);
 
@@ -227,9 +240,11 @@ t_ErrorCode cmd_buffer_get_line(t_Manager *manager, const t_Command *cmd)
 t_ErrorCode cmd_line_insert_data(t_Manager *manager, const t_Command *cmd)
 {
 	t_WritingCtx	*_ctx = manager->writing_ctx;
+	RETURN_IF_NULL(_ctx, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_CmdInsertData	*_payload = cmd->payload;
 	RETURN_IF_NULL(_payload, ERR_INVALID_PAYLOAD);
 
+	RETURN_IF_NULL(_ctx->buffers, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_Buffer *_buffer = _ctx->buffers[_payload->buffer_id];
 	RETURN_IF_NULL(_buffer, ERR_BUFFER_NOT_FOUND);
 
@@ -251,9 +266,11 @@ t_ErrorCode cmd_line_insert_data(t_Manager *manager, const t_Command *cmd)
 t_ErrorCode cmd_line_delete_data(t_Manager *manager, const t_Command *cmd)
 {
 	t_WritingCtx	*_ctx = manager->writing_ctx;
+	RETURN_IF_NULL(_ctx, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_CmdDeleteData	*_payload = cmd->payload;
 	RETURN_IF_NULL(_payload, ERR_INVALID_PAYLOAD);
 
+	RETURN_IF_NULL(_ctx->buffers, ERR_WRITING_CONTEXT_NOT_INITIALIZED);
 	t_Buffer *_buffer = _ctx->buffers[_payload->buffer_id];
 	RETURN_IF_NULL(_buffer, ERR_BUFFER_NOT_FOUND);
 

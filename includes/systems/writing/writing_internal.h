@@ -19,11 +19,11 @@
 /* A line in writing system */
 typedef struct	s_Line
 {
-	char			*data;	/* The data */
-	size_t			size;	/* The data size */
+	char			*data;		/* The data */
+	size_t			size;		/* The data size */
 	size_t			capacity;	/* The capacity */
-	struct s_Line	*prev;	/* The previous line */
-	struct s_Line	*next; 	/* The next line */
+	struct s_Line	*prev;			/* The previous line */
+	struct s_Line	*next; 			/* The next line */
 }	t_Line;
 
 /* A buffer in writing system */

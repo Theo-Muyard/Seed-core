@@ -18,7 +18,7 @@
 typedef struct s_WritingCtx
 {
 	t_Buffer	**buffers;	/* Buffers in the writing context */
-	size_t		count;	/* Buffers count */
+	size_t		count;		/* Buffers count */
 	size_t		capacity;	/* Buffers capacity */
 }	t_WritingCtx;
 

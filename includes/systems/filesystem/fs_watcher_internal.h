@@ -17,51 +17,51 @@
 typedef enum	e_FsEventsType
 {
 	FS_EVENT_CREATE = 0,	/* Create file/folder event */
-	FS_EVENT_DELETE,		/* Delete file/folder event */
+	FS_EVENT_DELETE,	/* Delete file/folder event */
 	FS_EVENT_MOVE,		/* Move file/folder event */
-	FS_EVENT_OVERFLOW		/* Queue/event overflow event */
+	FS_EVENT_OVERFLOW	/* Queue/event overflow event */
 }	t_FsEventsType;
 
 /* An filesystem event */
 typedef struct	s_FsEvent
 {
-	t_FsEventsType	type;		/* Event type */
-	char			*path;	/* File/folder path */
-	char			*new_path;	/* Optional new path */
-	bool			isdir;	/* Is folder ? */
-}	t_FsEvent; 
+	t_FsEventsType	type;			/* Event type */
+	char		*path;		/* File/folder path */
+	char		*new_path;	/* Optional new path */
+	bool		isdir;		/* Is folder ? */
+}	t_FsEvent;
 
 /* A watching entry */
 typedef struct	s_WatchEntry
 {
-	int		wd;	/* Watch descriptor */
+	int	wd;	/* Watch descriptor */
 	char	*path;	/* Folder path */
 }	t_WatchEntry;
 
 /* A move pending file/folder */
 typedef struct	s_MovePending
 {
-	uint32_t	cookie;	/* The pending cookie */
-	bool		is_dir;	/* Is folder ? */
+	uint32_t	cookie;		/* The pending cookie */
+	bool		is_dir;		/* Is folder ? */
 	char		*from_path;	/* The file/folder old path */
 }	t_MovePending;
 
 /* The watch context in filesystem */
 typedef struct	s_WatchCtx
 {
-	int			fd;			/* Root file descriptor */
-	char			*path;		/* Root path */
+	int		fd;			/* Root file descriptor */
+	char		*path;			/* Root path */
 
-	t_FsEvent		**event_queue;	/* Events queue */
-	size_t		event_count;	/* Count */
-	size_t		event_capacity;	/* Capacity */
+	t_FsEvent	**event_queue;		/* Events queue */
+	size_t		event_count;		/* Count */
+	size_t		event_capacity;		/* Capacity */
 
 	t_WatchEntry	**entries;		/* Watch entries */
-	size_t		entry_count;	/* Count */
-	size_t		entry_capacity;	/* Capacity */
+	size_t		entry_count;		/* Count */
+	size_t		entry_capacity;		/* Capacity */
 
 	t_MovePending	**pending;		/* Pending queue */
-	size_t		pending_count;	/* Count */
+	size_t		pending_count;		/* Count */
 	size_t		pending_capacity;	/* Capacity */
 }	t_WatchCtx;
 
