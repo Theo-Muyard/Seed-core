@@ -205,6 +205,7 @@ bool		line_insert_data(t_Line *line, ssize_t index, size_t size, const char *dat
 	if (size > 0 && data[size - 1] == '\0')
 		_insert_size--;
 
+	printf("INDEX: %zu\n", index);
 	memmove(
 		line->data + index + _insert_size,
 		line->data + index,
@@ -238,7 +239,7 @@ bool		line_delete_data(t_Line *line, size_t index, size_t size)
 		line->size - (index + size)
 	);
 
-	line->size = line->size - size;
+	line->size -= size;
 	line->data[line->size] = '\0';
 
 	return (true);

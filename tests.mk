@@ -22,24 +22,18 @@ INCLUDES		=	-I includes -I tests
 # 			SOURCE FILES
 # | ================================================ |
 
-# TESTS_SRC	=	tests/tools.c
+TESTS_SRC		=	tests/commands.c
 
-# MANAGER_SRC	=	tests/core/TEST_manager.c
-
-# DISPATCHER_SRC	=	tests/core/TEST_dispatcher.c
-
-WRITING_SRC	=	tests/writing.c
-
-# FS_SRC		=	tests/systems/filesystem/TEST_fs.c
+WRITING_SRC		=	tests/writing.c
 
 
 # | ================================================ |
 # 			OBJ FILES
 # | ================================================ |
 
-TEST_OBJ	=	$(addprefix $(BUILD_DIR)/, $(notdir $(TESTS_SRC:.c=.o)))
+TEST_OBJ		=	$(addprefix $(BUILD_DIR)/, $(notdir $(TESTS_SRC:.c=.o)))
 
-MANAGER_OBJ	=	$(addprefix $(BUILD_DIR)/, $(notdir $(MANAGER_SRC:.c=.o)))
+MANAGER_OBJ		=	$(addprefix $(BUILD_DIR)/, $(notdir $(MANAGER_SRC:.c=.o)))
 
 DISPATCHER_OBJ	=	$(addprefix $(BUILD_DIR)/, $(notdir $(DISPATCHER_SRC:.c=.o)))
 
@@ -114,8 +108,6 @@ $(BUILD_DIR):
 # | ================================================ |
 
 $(foreach src, $(TESTS_SRC), $(eval $(call COMPILE_OBJ,$(src))))
-$(foreach src, $(MANAGER_SRC), $(eval $(call COMPILE_OBJ,$(src))))
-$(foreach src, $(DISPATCHER_SRC), $(eval $(call COMPILE_OBJ,$(src))))
 $(foreach src, $(WRITING_SRC), $(eval $(call COMPILE_OBJ,$(src))))
 $(foreach src, $(FS_SRC), $(eval $(call COMPILE_OBJ,$(src))))
 

@@ -102,11 +102,19 @@ typedef struct	s_CmdDeleteLine
 	ssize_t	line;		/* The line index */
 }	t_CmdDeleteLine;
 
+typedef struct	s_CmdGetLine
+{
+	size_t	buffer_id;	/* The buffer ID */
+	ssize_t	line;		/* The line */
+	char		*out_data;	/* The line data */
+	size_t	out_size;	/* The data size */
+}	t_CmdGetLine;
+
 typedef struct	s_CmdSplitLine
 {
 	size_t	buffer_id;	/* The buffer ID */
 	ssize_t	line;		/* The line */
-	size_t	index;		/* The index */
+	size_t	index;	/* The index */
 }	t_CmdSplitLine;
 
 typedef struct	s_CmdJoinLine
@@ -115,14 +123,6 @@ typedef struct	s_CmdJoinLine
 	size_t	dst;		/* The destination line */
 	size_t	src;		/* The source line */
 }	t_CmdJoinLine;
-
-typedef struct	s_CmdGetLine
-{
-	size_t	buffer_id;		/* The buffer ID */
-	ssize_t	line;			/* The line */
-	char		*out_data;	/* The line data */
-	size_t	out_size;		/* The data size */
-}	t_CmdGetLine;
 
 typedef struct	s_CmdInsertData
 {
@@ -137,7 +137,7 @@ typedef struct	s_CmdDeleteData
 {
 	size_t	buffer_id;	/* The buffer ID */
 	ssize_t	line;		/* The line */
-	size_t	index;		/* The index */
+	size_t	index;	/* The index */
 	size_t	size;		/* The length of data that will be deleted */
 }	t_CmdDeleteData;
 

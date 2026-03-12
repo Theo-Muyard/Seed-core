@@ -19,6 +19,9 @@ static size_t utf8_codepoint_to_byte_offset(const char *str, size_t index)
 	size_t	_i = 0;
 	size_t	_count = 0;
 
+	if (strlen(str) == index)
+		return (index);
+
 	while (str[_i])
 	{
 		if ((str[_i] & 0xC0) != 0x80)
@@ -252,15 +255,13 @@ t_ErrorCode cmd_line_insert_data(t_Manager *manager, const t_Command *cmd)
 	RETURN_IF_NULL(_line, ERR_LINE_NOT_FOUND);
 
 	if (_payload->index <= -1)
-		_payload->index = _line->size ? _line->size - 1 : 0;
+		_payload->index = _line->size ? _line->size : 0;
 
 	size_t	_byte_offset = 0;
 	if (_line->size > 0 && _payload->index != 0)
 	{
-		printf("payload index: %zd\n", _payload->index);
 		_byte_offset = utf8_codepoint_to_byte_offset(_line->data, _payload->index);
-		printf("byte offset: %zd\n", _byte_offset);
-		if (_byte_offset <= 0 || _byte_offset >= _line->size)
+		if (_byte_offset <= 0 || _byte_offset > _line->size)
 			return (ERR_INVALID_PAYLOAD);
 	}
 
@@ -290,6 +291,7 @@ t_ErrorCode cmd_line_delete_data(t_Manager *manager, const t_Command *cmd)
 	if (_byte_offset <= 0 || _byte_offset >= _line->size)
 		return (ERR_INVALID_PAYLOAD);
 
+	printf("OFFSET: %zu\n", _byte_offset);
 	RETURN_IF_FALSE(
 		line_delete_data(_line, _byte_offset, _payload->size),
 		ERR_OPERATION_FAILED
