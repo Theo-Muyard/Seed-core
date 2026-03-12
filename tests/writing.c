@@ -121,7 +121,67 @@ int	test_line_command(t_Manager *manager)
 	size_t	_buffer_id = _buffer_payload.out_buffer_id;
 
 	RETURN_IF_ERR(test_line_insert(manager, _buffer_id, -1));
-	print_success("Line created correctly.");
+	RETURN_IF_ERR(test_line_insert(manager, _buffer_id, -1));
+	RETURN_IF_ERR(test_line_insert(manager, _buffer_id, -1));
+
+	
+	RETURN_IF_ERR(
+		test_insert_data(
+			manager,
+			_buffer_id, 0, -1, 12,
+			"First line!"
+		)
+	);
+	
+	RETURN_IF_ERR(
+		test_insert_data(
+			manager,
+			_buffer_id, 1, -1, 13,
+			"Second line!"
+		)
+	);
+
+	RETURN_IF_ERR(
+		test_insert_data(
+			manager,
+			_buffer_id, 2, -1, 12,
+			"Third line!"
+		)
+	);
+
+	RETURN_IF_ERR(test_line_join(manager, _buffer_id, 0, 1));
+
+	t_CmdGetLine	_line_get_payload = {
+		.buffer_id = _buffer_id,
+		.line = 0
+	};
+
+	RETURN_IF_ERR(test_get_line(manager, &_line_get_payload));
+	printf("DATA: %s\n", _line_get_payload.out_data);
+
+	RETURN_IF_ERR(test_line_split(manager, _buffer_id, 0, 11));
+
+	RETURN_IF_ERR(test_get_line(manager, &_line_get_payload));
+	printf("DATA: %s\n", _line_get_payload.out_data);
+
+	_line_get_payload.line = 1;
+	RETURN_IF_ERR(test_get_line(manager, &_line_get_payload));
+	printf("DATA: %s\n", _line_get_payload.out_data);
+
+	print_success("Lines created correctly.");
+
+	return (0);
+}
+
+int	test_data_command(t_Manager *manager)
+{
+	t_CmdCreateBuffer	_buffer_payload = {0};
+
+	RETURN_IF_ERR(test_buffer_create(manager, &_buffer_payload));
+
+	size_t	_buffer_id = _buffer_payload.out_buffer_id;
+
+	RETURN_IF_ERR(test_line_insert(manager, _buffer_id, -1));
 
 	RETURN_IF_ERR(
 		test_insert_data(
@@ -138,8 +198,15 @@ int	test_line_command(t_Manager *manager)
 
 	RETURN_IF_ERR(test_get_line(manager, &_line_get_payload));
 
-	printf("Line %zd: %s (%zd)\n", _line_get_payload.line,
-		_line_get_payload.out_data, _line_get_payload.out_size);
+	if (strncmp(
+		_line_get_payload.out_data,
+		"Hello,\tWorld ! 🙂",
+		_line_get_payload.out_size
+	) != 0)
+	{
+		print_error("The data has not been written correctly.");
+		return (1);
+	}
 
 	RETURN_IF_ERR(
 		test_insert_data(
@@ -149,19 +216,35 @@ int	test_line_command(t_Manager *manager)
 		)
 	);
 
-	RETURN_IF_ERR(test_delete_data(manager, _buffer_id, 0, 15, 1));
-
 	RETURN_IF_ERR(test_get_line(manager, &_line_get_payload));
 
-	printf("Line %zd: %s (%zd)\n", _line_get_payload.line,
-		_line_get_payload.out_data, _line_get_payload.out_size);
+	if (strncmp(
+		_line_get_payload.out_data,
+		"Hello,\tWorld ! 🙂 Second insertion here.",
+		_line_get_payload.out_size
+	) != 0)
+	{
+		print_error("The data has not been written correctly.");
+		return (1);
+	}
 
-	return (0);
-}
+	print_success("Data writted correctly.");
 
-int	test_data_command(t_Manager *manager)
-{
-	(void)manager;
+	RETURN_IF_ERR(test_delete_data(manager, _buffer_id, 0, 14, 5));
+	RETURN_IF_ERR(test_get_line(manager, &_line_get_payload));
+
+	if (strncmp(
+		_line_get_payload.out_data,
+		"Hello,\tWorld ! Second insertion here.",
+		_line_get_payload.out_size
+	) != 0)
+	{
+		print_error("The data has not been written correctly.");
+		return (1);
+	}
+
+	print_success("Data deleted correctly.");
+
 	return (0);
 }
 
@@ -182,6 +265,7 @@ int	main(void)
 	print_section("LINE COMMANDS");
 	_status |= test_line_command(_manager);
 
+	print_section("DATA COMMANDS");
 	_status |= test_data_command(_manager);
 
 	manager_clean(_manager);

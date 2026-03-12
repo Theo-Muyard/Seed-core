@@ -291,7 +291,6 @@ t_ErrorCode cmd_line_delete_data(t_Manager *manager, const t_Command *cmd)
 	if (_byte_offset <= 0 || _byte_offset >= _line->size)
 		return (ERR_INVALID_PAYLOAD);
 
-	printf("OFFSET: %zu\n", _byte_offset);
 	RETURN_IF_FALSE(
 		line_delete_data(_line, _byte_offset, _payload->size),
 		ERR_OPERATION_FAILED
