@@ -1,4 +1,8 @@
-# Seed Core v0.2 - API Documentation
+# Seed Core v.0.3
+
+> One day or day one ?
+
+<!-- # Seed Core v0.2 - API Documentation
 
 > High-performance backend core for writing and filesystem operations, driven by a command-based API.
 
@@ -605,4 +609,4 @@ Useful references in this repository:
 
 ---
 
-**Seed Core v0.2** | Command-based backend API
+**Seed Core v0.2** | Command-based backend API -->

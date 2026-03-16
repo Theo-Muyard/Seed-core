@@ -14,30 +14,30 @@ typedef struct s_Manager	t_Manager;
 /* Error codes for API manager */
 typedef enum	e_ErrorCode
 {
-	ERR_SUCCESS = 0,			/* Success */
+	ERR_SUCCESS = 0,					/* Success */
 
-	ERR_INTERNAL_MEMORY,			/* Internal memory error */
-	ERR_OPERATION_FAILED,			/* Operation failed */
-	ERR_PERMISSION_DENIED,			/* Permission denied */
+	ERR_INTERNAL_MEMORY,				/* Internal memory error */
+	ERR_OPERATION_FAILED,				/* Operation failed */
+	ERR_PERMISSION_DENIED,				/* Permission denied */
 
-	ERR_INVALID_MANAGER,			/* Invalid manager */
-	ERR_INVALID_PAYLOAD,			/* Invalid payload content */
-	ERR_INVALID_COMMAND,			/* Invalid command */
-	ERR_INVALID_COMMAND_ID,			/* Invalid command ID*/
+	ERR_INVALID_MANAGER,				/* Invalid manager */
+	ERR_INVALID_PAYLOAD,				/* Invalid payload content */
+	ERR_INVALID_COMMAND,				/* Invalid command */
+	ERR_INVALID_COMMAND_ID,				/* Invalid command ID*/
 
 	ERR_DISPATCHER_NOT_INITIALIZED,		/* Dispatcher not initialized */
 	ERR_WRITING_CONTEXT_NOT_INITIALIZED,	/* Writing context not initialized */
 	ERR_FS_CONTEXT_NOT_INITIALIZED,		/* Filesystem context not initialized */
 
-	ERR_BUFFER_NOT_FOUND,			/* Buffer not found */
-	ERR_LINE_NOT_FOUND,			/* Line not found */
+	ERR_BUFFER_NOT_FOUND,				/* Buffer not found */
+	ERR_LINE_NOT_FOUND,				/* Line not found */
 
-	ERR_DIR_NOT_FOUND,			/* Directory not found */
-	ERR_DIR_ACCESS,				/* Directory access denied */
-	ERR_DIR_EXIST,				/* Directory aleady exist */
-	ERR_FILE_NOT_FOUND,			/* File not found */
-	ERR_FILE_ACCESS,			/* File access denied */
-	ERR_FILE_EXIST				/* File already exist */
+	ERR_DIR_NOT_FOUND,				/* Directory not found */
+	ERR_DIR_ACCESS,					/* Directory access denied */
+	ERR_DIR_EXIST,					/* Directory aleady exist */
+	ERR_FILE_NOT_FOUND,				/* File not found */
+	ERR_FILE_ACCESS,					/* File access denied */
+	ERR_FILE_EXIST					/* File already exist */
 }	t_ErrorCode;
 
 /* Command ID for API manager */
@@ -55,16 +55,16 @@ typedef enum	e_CommandId
 	CMD_WRITING_DELETE_TEXT,	/* Delete text inside a line */
 
 	/* +==-- Filesystem commands ID --==+ */
-	CMD_FS_OPEN_ROOT,	/* Open a root directory */
+	CMD_FS_OPEN_ROOT,		/* Open a root directory */
 	CMD_FS_CLOSE_ROOT,	/* Close a root directory */
 	CMD_FS_CREATE_DIR,	/* Create a directory */
 	CMD_FS_DELETE_DIR,	/* Delete a directory */
-	CMD_FS_MOVE_DIR,	/* Move a directory */
+	CMD_FS_MOVE_DIR,		/* Move a directory */
 	CMD_FS_CREATE_FILE,	/* Create a file */
 	CMD_FS_DELETE_FILE,	/* Delete a file */
-	CMD_FS_READ_FILE,	/* Read text inside a file */
+	CMD_FS_READ_FILE,		/* Read text inside a file */
 	CMD_FS_WRITE_FILE,	/* Write text inside a file */
-	CMD_FS_MOVE_FILE	/* Move a file */
+	CMD_FS_MOVE_FILE		/* Move a file */
 }	t_CommandId;
 
 /* The command content for API manager */
@@ -128,7 +128,7 @@ typedef struct	s_CmdInsertData
 {
 	size_t	buffer_id;	/* The buffer ID */
 	ssize_t	line;		/* The line */
-	ssize_t	index;		/* The index */
+	ssize_t	index;	/* The index */
 	size_t	size;		/* The data size */
 	const char	*data;	/* The data content */
 }	t_CmdInsertData;
@@ -183,8 +183,8 @@ typedef struct	s_CmdMoveFile
 
 typedef struct	s_CmdReadFile
 {
-	char	*path;		/* The relative path of the file */
-	char	*out_data;	/* The data that was be readed */
+	char		*path;		/* The relative path of the file */
+	char		*out_data;		/* The data that was be readed */
 	size_t	out_len;	/* The length of the data */
 }	t_CmdReadFile;
 

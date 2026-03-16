@@ -20,22 +20,22 @@
 /* A file in the filesystem */
 typedef struct	s_File
 {
-	char			*filename;	/* The filename */
+	char			*filename;		/* The filename */
 	struct s_Directory	*parent;	/* The parent directory */
 }	t_File;
 
 /* A directory in the filesystem */
 typedef struct	s_Directory
 {
-	char			*dirname;		/* The dirname */
+	char			*dirname;			/* The dirname */
 	struct s_Directory	*parent;		/* The parent directory */
 
 	t_File			**files;		/* The files his contains */
-	size_t			files_count;		/* The files count */
-	size_t			files_capacity;		/* The file capacity */
+	size_t			files_count;	/* The files count */
+	size_t			files_capacity;	/* The file capacity */
 
 	struct s_Directory	**subdirs;		/* The subdir his contains */
-	size_t			subdirs_count;		/* The subdir count */
+	size_t			subdirs_count;	/* The subdir count */
 	size_t			subdirs_capacity;	/* The subdir capacity */
 }	t_Directory;
 

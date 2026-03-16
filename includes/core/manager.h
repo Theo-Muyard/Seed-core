@@ -20,7 +20,7 @@ typedef struct	s_Manager
 {
 	t_Dispatcher	*dispatcher;	/* The dispatcher */
 	t_WritingCtx	*writing_ctx;	/* The writing context */
-	t_FileSystemCtx	*fs_ctx;	/* The filesysten context */
+	t_FileSystemCtx	*fs_ctx;		/* The filesysten context */
 }	t_Manager;
 
 /**

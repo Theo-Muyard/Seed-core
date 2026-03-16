@@ -67,7 +67,7 @@ all: $(NAME)
 
 $(NAME): $(BUILD_DIR) $(OBJ)
 	@$(AR) $(FLAGS) $(NAME) $(OBJ)
-	@echo "$(GREEN)Done$(WHITE)."
+	@echo -e "$(GREEN)Done$(WHITE)."
 
 # | ================================================ |
 # 			CLEAN RULE
@@ -75,7 +75,7 @@ $(NAME): $(BUILD_DIR) $(OBJ)
 
 clean:
 	@rm -rf $(BUILD_DIR)
-	@echo "$(RED)Cleaned$(WHITE)."
+	@echo -e "$(RED)Cleaned$(WHITE)."
 
 # | ================================================ |
 # 			FCLEAN RULE
@@ -83,7 +83,7 @@ clean:
 
 fclean:
 	@rm -rf $(BUILD_DIR) $(NAME) $(TEST)
-	@echo "$(RED)Fcleaned$(WHITE)."
+	@echo -e "$(RED)Fcleaned$(WHITE)."
 
 # | ================================================ |
 # 			RE RULE

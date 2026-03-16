@@ -19,11 +19,11 @@
 /* A line in writing system */
 typedef struct	s_Line
 {
-	char			*data;		/* The data */
-	size_t			size;		/* The data size */
-	size_t			capacity;	/* The capacity */
-	struct s_Line	*prev;			/* The previous line */
-	struct s_Line	*next; 			/* The next line */
+	char			*data;	/* The data */
+	size_t		size;		/* The data size */
+	size_t		capacity;	/* The capacity */
+	struct s_Line	*prev;	/* The previous line */
+	struct s_Line	*next; 	/* The next line */
 }	t_Line;
 
 /* A buffer in writing system */
@@ -62,7 +62,7 @@ void		buffer_destroy(t_Buffer *buffer);
  * 
  * @warning Caller must free returned pointer with `free()`.
 */
-t_Line		*line_create(void);
+t_Line	*line_create(void);
 
 /**
  * @brief Destroys the given line in the buffer.
@@ -84,7 +84,7 @@ void		buffer_line_destroy(t_Buffer *buffer, t_Line *line);
  * @retval NULL if `buffer` is NULL, if the index does not exist
  * 		in the buffer or an error occurred. 
 */
-t_Line		*buffer_get_line(t_Buffer *buffer, ssize_t index);
+t_Line	*buffer_get_line(t_Buffer *buffer, ssize_t index);
 
 /**
  * @brief Adds the line to the specified index in the buffer.
@@ -111,7 +111,7 @@ bool		buffer_line_insert(t_Buffer *buffer, t_Line *line, ssize_t index);
  * @retval TRUE for success.
  * @retval FALSE if `buffer` or `line` is NULL or an error occured.
 */
-t_Line		*buffer_line_split(t_Buffer *buffer, t_Line *line, size_t index);
+t_Line	*buffer_line_split(t_Buffer *buffer, t_Line *line, size_t index);
 
 /**
  * @brief Joins two lines.
@@ -127,7 +127,7 @@ t_Line		*buffer_line_split(t_Buffer *buffer, t_Line *line, size_t index);
  * @retval TRUE for success.
  * @retval FALSE if `buffer` or `line` is NULL or an error occured.
 */
-t_Line		*buffer_line_join(t_Buffer *buffer, t_Line *dst, t_Line *src);
+t_Line	*buffer_line_join(t_Buffer *buffer, t_Line *dst, t_Line *src);
 
 // +===----- Data functions -----===+ //
 

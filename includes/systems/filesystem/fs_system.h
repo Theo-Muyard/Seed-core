@@ -18,7 +18,7 @@
 typedef struct s_FileSystemCtx
 {
 	t_Directory	*root;		/* The root directory */
-	char		*root_path;	/* The absolute root path */
+	char		*root_path;		/* The absolute root path */
 	size_t		path_len;	/* The path length */
 }	t_FileSystemCtx;
 

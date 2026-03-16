@@ -82,19 +82,19 @@ run:
 
 manager: $(TEST_OBJ) $(MANAGER_OBJ)
 	@$(CC) $(CFLAGS) $(TEST_OBJ) $(MANAGER_OBJ) $(SEED_ARCHIVE) -o $(NAME)
-	@echo "$(GREEN)Done$(WHITE)."
+	@echo -e "$(GREEN)Done$(WHITE)."
 
 dispatcher: $(TEST_OBJ) $(DISPATCHER_OBJ)
 	@$(CC) $(CFLAGS) $(TEST_OBJ) $(DISPATCHER_OBJ) $(SEED_ARCHIVE) -o $(NAME)
-	@echo "$(GREEN)Done$(WHITE)."
+	@echo -e "$(GREEN)Done$(WHITE)."
 
 writing: $(TEST_OBJ) $(WRITING_OBJ)
 	@$(CC) $(CFLAGS) $(TEST_OBJ) $(WRITING_OBJ) $(SEED_ARCHIVE) -o $(NAME)
-	@echo "$(GREEN)Done$(WHITE)."
+	@echo -e "$(GREEN)Done$(WHITE)."
 
 fs: $(TEST_OBJ) $(FS_OBJ)
 	@$(CC) $(CFLAGS) $(TEST_OBJ) $(FS_OBJ) $(SEED_ARCHIVE) -o $(NAME)
-	@echo "$(GREEN)Done$(WHITE)."
+	@echo -e "$(GREEN)Done$(WHITE)."
 
 # | ================================================ |
 # 			DIRECTORY

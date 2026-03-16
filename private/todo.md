@@ -1,4 +1,8 @@
-# 📋 Seed Core - Roadmap & Todo List
+# Seed Core - Todo List
+
+> A day ?
+
+<!-- # 📋 Seed Core - Roadmap & Todo List
 
 > Un système backend haute performance pour opérations textuelles. Cette liste documente l'évolution planifiée et les tâches à accomplir.
 
@@ -265,4 +269,4 @@ v0.2 (Fondations: Erreurs, Validation, FS)
 ---
 
 *Last Updated: 2026-01-29*  
-*Next Review: Après completion de v0.2*
+*Next Review: Après completion de v0.2* -->
